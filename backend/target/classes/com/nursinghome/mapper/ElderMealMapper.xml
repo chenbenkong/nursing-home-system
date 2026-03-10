@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursinghome.mapper.ElderMealMapper">
+
+    <resultMap id="BaseResultMap" type="com.nursinghome.entity.ElderMeal">
+        <id column="id" property="id"/>
+        <result column="elder_id" property="elderId"/>
+        <result column="elder_name" property="elderName"/>
+        <result column="meal_date" property="mealDate"/>
+        <result column="meal_type" property="mealType"/>
+        <result column="menu_id" property="menuId"/>
+        <result column="food_items" property="foodItems"/>
+        <result column="intake_amount" property="intakeAmount"/>
+        <result column="appetite" property="appetite"/>
+        <result column="special_needs" property="specialNeeds"/>
+        <result column="allergies" property="allergies"/>
+        <result column="record_by" property="recordBy"/>
+        <result column="record_by_name" property="recordByName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        em.id, em.elder_id, e.name as elder_name, em.meal_date, em.meal_type, em.menu_id, em.food_items,
+        em.intake_amount, em.appetite, em.special_needs, em.allergies, em.record_by, em.record_by_name,
+        em.create_time, em.update_time, em.remark
+    </sql>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM elder_meal em
+        LEFT JOIN elder e ON em.elder_id = e.id
+        ORDER BY em.meal_date DESC, em.meal_type ASC
+    </select>
+
+    <select id="selectByElderId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM elder_meal em
+        LEFT JOIN elder e ON em.elder_id = e.id
+        WHERE em.elder_id = #{elderId}
+        ORDER BY em.meal_date DESC, em.meal_type ASC
+    </select>
+
+    <select id="selectByDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM elder_meal em
+        LEFT JOIN elder e ON em.elder_id = e.id
+        WHERE em.meal_date = #{date}
+        ORDER BY em.meal_type ASC
+    </select>
+
+    <select id="selectByElderIdAndDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM elder_meal em
+        LEFT JOIN elder e ON em.elder_id = e.id
+        WHERE em.elder_id = #{elderId} AND em.meal_date = #{date}
+        ORDER BY em.meal_type ASC
+    </select>
+
+    <select id="selectByDateRange" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM elder_meal em
+        LEFT JOIN elder e ON em.elder_id = e.id
+        WHERE em.meal_date BETWEEN #{startDate} AND #{endDate}
+        ORDER BY em.meal_date DESC, em.meal_type ASC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM elder_meal em
+        LEFT JOIN elder e ON em.elder_id = e.id
+        WHERE em.id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO elder_meal (
+            elder_id, meal_date, meal_type, menu_id, food_items,
+            intake_amount, appetite, special_needs, allergies, record_by, record_by_name, remark
+        ) VALUES (
+            #{elderId}, #{mealDate}, #{mealType}, #{menuId}, #{foodItems},
+            #{intakeAmount}, #{appetite}, #{specialNeeds}, #{allergies}, #{recordBy}, #{recordByName}, #{remark}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE elder_meal
+        <set>
+            <if test="elderId != null">elder_id = #{elderId},</if>
+            <if test="mealDate != null">meal_date = #{mealDate},</if>
+            <if test="mealType != null">meal_type = #{mealType},</if>
+            <if test="menuId != null">menu_id = #{menuId},</if>
+            <if test="foodItems != null">food_items = #{foodItems},</if>
+            <if test="intakeAmount != null">intake_amount = #{intakeAmount},</if>
+            <if test="appetite != null">appetite = #{appetite},</if>
+            <if test="specialNeeds != null">special_needs = #{specialNeeds},</if>
+            <if test="allergies != null">allergies = #{allergies},</if>
+            <if test="recordBy != null">record_by = #{recordBy},</if>
+            <if test="recordByName != null">record_by_name = #{recordByName},</if>
+            <if test="remark != null">remark = #{remark}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM elder_meal WHERE id = #{id}
+    </delete>
+
+    <select id="countAll" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM elder_meal
+    </select>
+
+    <select id="countByElderId" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM elder_meal WHERE elder_id = #{elderId}
+    </select>
+
+    <select id="countByDate" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM elder_meal WHERE meal_date = #{date}
+    </select>
+
+</mapper>

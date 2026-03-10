@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursinghome.mapper.CarePlanMapper">
+
+    <resultMap id="CarePlanResultMap" type="com.nursinghome.entity.CarePlan">
+        <id property="id" column="id"/>
+        <result property="planNo" column="plan_no"/>
+        <result property="elderId" column="elder_id"/>
+        <result property="elderName" column="elder_name"/>
+        <result property="planName" column="plan_name"/>
+        <result property="careLevel" column="care_level"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="status" column="status"/>
+        <result property="nurseId" column="nurse_id"/>
+        <result property="nurseName" column="nurse_name"/>
+        <result property="dietPlan" column="diet_plan"/>
+        <result property="medicationPlan" column="medication_plan"/>
+        <result property="dailyCare" column="daily_care"/>
+        <result property="rehabilitationPlan" column="rehabilitation_plan"/>
+        <result property="specialNotes" column="special_notes"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        cp.id, cp.plan_no, cp.elder_id, e.name as elder_name, cp.plan_name, cp.care_level,
+        cp.start_date, cp.end_date, cp.status, cp.nurse_id, cp.nurse_name, cp.diet_plan,
+        cp.medication_plan, cp.daily_care, cp.rehabilitation_plan, cp.special_notes,
+        cp.create_by, cp.create_time, cp.update_time
+    </sql>
+
+    <select id="selectById" resultMap="CarePlanResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM care_plan cp
+        LEFT JOIN elder e ON cp.elder_id = e.id
+        WHERE cp.id = #{id}
+    </select>
+
+    <select id="selectByPlanNo" resultMap="CarePlanResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM care_plan cp
+        LEFT JOIN elder e ON cp.elder_id = e.id
+        WHERE cp.plan_no = #{planNo}
+    </select>
+
+    <select id="selectAll" resultMap="CarePlanResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM care_plan cp
+        LEFT JOIN elder e ON cp.elder_id = e.id
+        ORDER BY cp.create_time DESC
+    </select>
+
+    <select id="selectByElderId" resultMap="CarePlanResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM care_plan cp
+        LEFT JOIN elder e ON cp.elder_id = e.id
+        WHERE cp.elder_id = #{elderId}
+        ORDER BY cp.create_time DESC
+    </select>
+
+    <select id="selectByStatus" resultMap="CarePlanResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM care_plan cp
+        LEFT JOIN elder e ON cp.elder_id = e.id
+        WHERE cp.status = #{status}
+        ORDER BY cp.create_time DESC
+    </select>
+
+    <select id="selectByCondition" resultMap="CarePlanResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM care_plan cp
+        LEFT JOIN elder e ON cp.elder_id = e.id
+        <where>
+            <if test="planName != null and planName != ''">
+                AND cp.plan_name LIKE CONCAT('%', #{planName}, '%')
+            </if>
+            <if test="elderName != null and elderName != ''">
+                AND e.name LIKE CONCAT('%', #{elderName}, '%')
+            </if>
+            <if test="careLevel != null and careLevel != ''">
+                AND cp.care_level = #{careLevel}
+            </if>
+            <if test="status != null and status != ''">
+                AND cp.status = #{status}
+            </if>
+            <if test="elderId != null">
+                AND cp.elder_id = #{elderId}
+            </if>
+        </where>
+        ORDER BY cp.create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO care_plan (plan_no, elder_id, plan_name, care_level, start_date, end_date, status,
+                              nurse_id, nurse_name, diet_plan, medication_plan, daily_care, rehabilitation_plan,
+                              special_notes, create_by)
+        VALUES (#{planNo}, #{elderId}, #{planName}, #{careLevel}, #{startDate}, #{endDate}, #{status},
+                #{nurseId}, #{nurseName}, #{dietPlan}, #{medicationPlan}, #{dailyCare}, #{rehabilitationPlan},
+                #{specialNotes}, #{createBy})
+    </insert>
+
+    <update id="update">
+        UPDATE care_plan
+        <set>
+            <if test="planName != null">plan_name = #{planName},</if>
+            <if test="careLevel != null">care_level = #{careLevel},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="nurseId != null">nurse_id = #{nurseId},</if>
+            <if test="nurseName != null">nurse_name = #{nurseName},</if>
+            <if test="dietPlan != null">diet_plan = #{dietPlan},</if>
+            <if test="medicationPlan != null">medication_plan = #{medicationPlan},</if>
+            <if test="dailyCare != null">daily_care = #{dailyCare},</if>
+            <if test="rehabilitationPlan != null">rehabilitation_plan = #{rehabilitationPlan},</if>
+            <if test="specialNotes != null">special_notes = #{specialNotes}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM care_plan WHERE id = #{id}
+    </delete>
+
+</mapper>

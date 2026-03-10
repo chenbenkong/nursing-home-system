@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursinghome.mapper.MealMenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.nursinghome.entity.MealMenu">
+        <id column="id" property="id"/>
+        <result column="menu_date" property="menuDate"/>
+        <result column="meal_type" property="mealType"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="dishes" property="dishes"/>
+        <result column="nutrition_info" property="nutritionInfo"/>
+        <result column="suitable_for" property="suitableFor"/>
+        <result column="calories" property="calories"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, menu_date, meal_type, menu_name, dishes, nutrition_info, suitable_for, calories, create_by, create_time, update_time
+    </sql>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM meal_menu
+        ORDER BY menu_date DESC, meal_type
+    </select>
+
+    <select id="selectByMealType" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM meal_menu
+        WHERE meal_type = #{mealType}
+        ORDER BY menu_date DESC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM meal_menu
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO meal_menu (
+            menu_date, meal_type, menu_name, dishes, nutrition_info, suitable_for, calories, create_by
+        ) VALUES (
+            #{menuDate}, #{mealType}, #{menuName}, #{dishes}, #{nutritionInfo}, #{suitableFor}, #{calories}, #{createBy}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE meal_menu
+        <set>
+            <if test="menuDate != null">menu_date = #{menuDate},</if>
+            <if test="mealType != null">meal_type = #{mealType},</if>
+            <if test="menuName != null">menu_name = #{menuName},</if>
+            <if test="dishes != null">dishes = #{dishes},</if>
+            <if test="nutritionInfo != null">nutrition_info = #{nutritionInfo},</if>
+            <if test="suitableFor != null">suitable_for = #{suitableFor},</if>
+            <if test="calories != null">calories = #{calories},</if>
+            <if test="createBy != null">create_by = #{createBy}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM meal_menu WHERE id = #{id}
+    </delete>
+
+    <select id="countAll" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM meal_menu
+    </select>
+
+</mapper>

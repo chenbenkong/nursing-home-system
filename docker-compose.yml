@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # 前端 + Nginx
+  nginx:
+    build: ./frontend
+    container_name: nursing-nginx
+    ports:
+      - "80:80"
+    networks:
+      - nursing-network
+    depends_on:
+      - tomcat
+
+  # 后端 + Tomcat
+  tomcat:
+    build: ./backend
+    container_name: nursing-tomcat
+    networks:
+      - nursing-network
+    environment:
+      - TZ=Asia/Shanghai
+
+networks:
+  nursing-network:
+    driver: bridge
+    external: true
