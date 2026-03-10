@@ -154,7 +154,7 @@ npm run build
 ## 默认账号
 
 - 用户名: admin
-- 密码: admin123
+- 密码: 123456
 
 ## API接口文档
 
