@@ -143,6 +143,40 @@
         </div>
       </div>
 
+      <!-- 文艺涂鸦装饰区 -->
+      <div class="art-doodles">
+        <!-- 手绘装饰线 -->
+        <svg class="doodle-lines" viewBox="0 0 1200 100" preserveAspectRatio="xMidYMid meet">
+          <path class="wavy-line" d="M0,50 Q100,30 200,50 T400,50 T600,50 T800,50 T1000,50 T1200,50" />
+          <path class="wavy-line delay" d="M0,60 Q100,40 200,60 T400,60 T600,60 T800,60 T1000,60 T1200,60" />
+          <circle class="doodle-dot" cx="100" cy="30" r="3" />
+          <circle class="doodle-dot delay" cx="300" cy="70" r="2" />
+          <circle class="doodle-dot delay2" cx="500" cy="25" r="2.5" />
+          <circle class="doodle-dot delay3" cx="700" cy="75" r="2" />
+          <circle class="doodle-dot delay4" cx="900" cy="35" r="3" />
+          <circle class="doodle-dot delay5" cx="1100" cy="65" r="2" />
+        </svg>
+        
+        <!-- 漂浮的文艺元素 -->
+        <div class="floating-doodles">
+          <span class="doodle-item leaf-1">🍃</span>
+          <span class="doodle-item leaf-2">🌿</span>
+          <span class="doodle-item flower-1">🌸</span>
+          <span class="doodle-item leaf-3">🍂</span>
+          <span class="doodle-item flower-2">🌺</span>
+          <span class="doodle-item leaf-4">🌱</span>
+        </div>
+        
+        <!-- 手绘小图标 -->
+        <div class="hand-drawn-icons">
+          <span class="icon-item">✿</span>
+          <span class="icon-item">❀</span>
+          <span class="icon-item">✾</span>
+          <span class="icon-item">❁</span>
+          <span class="icon-item">✽</span>
+        </div>
+      </div>
+
       <!-- 底部诗意标语 -->
       <div class="poetry-footer">
         <div class="footer-decoration">
@@ -355,6 +389,17 @@ $gold-accent: #b8952e;
       }
     }
     .action-label-v2 { color: rgba(255, 255, 255, 0.75); }
+
+    // 文艺涂鸦 - 深色模式
+    .art-doodles {
+      .doodle-lines {
+        .wavy-line { stroke: rgba(255, 255, 255, 0.3); }
+        .doodle-dot { fill: rgba(255, 255, 255, 0.4); }
+      }
+      .hand-drawn-icons {
+        .icon-item { color: rgba(255, 255, 255, 0.2); }
+      }
+    }
 
     // 底部 - 深色模式
     .poetry-footer {
@@ -613,6 +658,107 @@ $gold-accent: #b8952e;
   text-align: center;
   white-space: nowrap;
   font-weight: 500;
+}
+
+// 文艺涂鸦装饰区
+.art-doodles {
+  position: relative;
+  padding: 40px 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+
+  .doodle-lines {
+    width: 100%;
+    height: 100px;
+    opacity: 0.15;
+
+    .wavy-line {
+      fill: none;
+      stroke: #909399;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: drawWavyLine 3s ease-out forwards;
+
+      &.delay {
+        animation-delay: 0.5s;
+      }
+    }
+
+    @keyframes drawWavyLine {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .doodle-dot {
+      fill: #c0c4cc;
+      opacity: 0;
+      animation: dotAppear 0.5s ease-out forwards;
+
+      &.delay { animation-delay: 1s; }
+      &.delay2 { animation-delay: 1.2s; }
+      &.delay3 { animation-delay: 1.4s; }
+      &.delay4 { animation-delay: 1.6s; }
+      &.delay5 { animation-delay: 1.8s; }
+    }
+
+    @keyframes dotAppear {
+      to { opacity: 0.6; }
+    }
+  }
+
+  .floating-doodles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+
+    .doodle-item {
+      position: absolute;
+      font-size: 20px;
+      opacity: 0.4;
+      animation: floatDoodle 8s ease-in-out infinite;
+
+      &.leaf-1 { left: 10%; top: 20%; animation-delay: 0s; }
+      &.leaf-2 { left: 25%; top: 60%; animation-delay: 1s; font-size: 16px; }
+      &.flower-1 { left: 40%; top: 30%; animation-delay: 2s; font-size: 18px; }
+      &.leaf-3 { left: 55%; top: 50%; animation-delay: 3s; font-size: 14px; }
+      &.flower-2 { left: 70%; top: 25%; animation-delay: 4s; font-size: 16px; }
+      &.leaf-4 { left: 85%; top: 55%; animation-delay: 5s; font-size: 18px; }
+    }
+
+    @keyframes floatDoodle {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-10px) rotate(5deg); }
+      50% { transform: translateY(0) rotate(0deg); }
+      75% { transform: translateY(10px) rotate(-5deg); }
+    }
+  }
+
+  .hand-drawn-icons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+
+    .icon-item {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.15);
+      animation: iconPulse 3s ease-in-out infinite;
+
+      &:nth-child(2) { animation-delay: 0.5s; }
+      &:nth-child(3) { animation-delay: 1s; }
+      &:nth-child(4) { animation-delay: 1.5s; }
+      &:nth-child(5) { animation-delay: 2s; }
+    }
+
+    @keyframes iconPulse {
+      0%, 100% { opacity: 0.15; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(1.2); }
+    }
+  }
 }
 
 // 底部诗意区域
