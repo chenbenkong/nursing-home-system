@@ -1,5 +1,8 @@
 <template>
   <div class="physical-exam-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :xs="24" :sm="12" :md="6">
@@ -318,6 +321,7 @@ import {
   updatePhysicalExam,
   deletePhysicalExam
 } from '@/api/health'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 import { getAllElders } from '@/api/elder'
 
 // 搜索表单

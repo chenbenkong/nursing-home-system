@@ -61,19 +61,12 @@
           <div class="stars">
             <span v-for="n in 30" :key="n" class="star" :class="'star-' + n"></span>
           </div>
-          <div class="shooting-stars">
-            <span class="shooting-star"></span>
-            <span class="shooting-star delay"></span>
-          </div>
           <svg class="header-svg" viewBox="0 0 1200 60" preserveAspectRatio="none">
             <!-- 月亮 -->
             <path class="moon" d="M580,15 A15,15 0 1,1 580,45 A10,10 0 1,0 580,15" />
             <!-- 星座连线 -->
             <path class="constellation" d="M100,30 L120,25 L140,35 L120,45 Z" />
             <path class="constellation" d="M1000,20 L1020,15 L1040,25" />
-            <!-- 流星轨迹 -->
-            <path class="meteor-trail" d="M200,10 L250,30" />
-            <path class="meteor-trail delay" d="M900,5 L950,25" />
           </svg>
         </div>
 

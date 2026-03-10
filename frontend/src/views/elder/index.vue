@@ -1,5 +1,8 @@
 <template>
   <div class="elder-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :xs="24" :sm="12" :md="6">
@@ -415,10 +418,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus } from '@element-plus/icons-vue'
 import { getElderList, addElder, updateElder, deleteElder, checkIn, checkOut } from '@/api/elder'
 import { getAvailableRooms } from '@/api/room'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 export default {
   name: 'Elder',
   components: {
+    ArtisticBackground,
     Search,
     Refresh,
     Plus

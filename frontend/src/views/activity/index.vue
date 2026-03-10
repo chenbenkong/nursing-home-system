@@ -1,5 +1,8 @@
 <template>
   <div class="activity-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <el-card class="search-card">
       <el-form :inline="true" :model="searchForm" class="search-form">
         <el-form-item label="活动标题">
@@ -160,6 +163,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus } from '@element-plus/icons-vue'
 import { getActivityList, createActivity, updateActivity, deleteActivity, startActivity, completeActivity, registerActivity } from '@/api/activity'
 import { getAllElders } from '@/api/elder'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 const loading = ref(false)
 const submitLoading = ref(false)

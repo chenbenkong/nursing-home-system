@@ -1,5 +1,8 @@
 <template>
   <div class="inventory-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :xs="24" :sm="12" :md="6">
@@ -242,6 +245,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Warning, Box, CircleCheck, FirstAidKit } from '@element-plus/icons-vue'
 import { getInventoryList, addInventory, updateInventory, deleteInventory, stockIn, stockOut, getLowStockInventories } from '@/api/inventory'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 const loading = ref(false)
 const submitLoading = ref(false)

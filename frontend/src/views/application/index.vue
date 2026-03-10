@@ -1,5 +1,8 @@
 <template>
   <div class="application-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :xs="24" :sm="12" :md="6">
@@ -409,10 +412,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Document, Timer, CircleCheck, CircleClose } from '@element-plus/icons-vue'
 import { getApplicationList, submitApplication, updateApplication, approveApplication, rejectApplication, deleteApplication } from '@/api/application'
 import { getAvailableRooms } from '@/api/room'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 export default {
   name: 'Application',
   components: {
+    ArtisticBackground,
     Search,
     Refresh,
     Plus,

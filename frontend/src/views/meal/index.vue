@@ -1,5 +1,8 @@
 <template>
   <div class="meal-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :xs="24" :sm="12" :md="6">
@@ -214,6 +217,7 @@ import { ref, reactive, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Food, Sunny, Sunrise, Moon } from '@element-plus/icons-vue'
 import { getMealMenuList, addMealMenu, updateMealMenu, deleteMealMenu } from '@/api/meal'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 const loading = ref(false)
 const submitLoading = ref(false)

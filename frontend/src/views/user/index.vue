@@ -1,5 +1,8 @@
 <template>
   <div class="user-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :xs="24" :sm="12" :md="6">
@@ -259,10 +262,12 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, User as UserIcon, CircleCheck, UserFilled, FirstAidKit } from '@element-plus/icons-vue'
 import { getUserList, addUser, updateUser, deleteUser } from '@/api/user'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 export default {
   name: 'User',
   components: {
+    ArtisticBackground,
     Search,
     Refresh,
     Plus,

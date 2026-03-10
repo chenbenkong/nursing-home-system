@@ -1,5 +1,8 @@
 <template>
   <div class="emergency-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :span="6">
@@ -322,6 +325,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 import {
   getEmergencyEventList,
   addEmergencyEvent,

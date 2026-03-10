@@ -1,5 +1,8 @@
 <template>
   <div class="room-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :xs="24" :sm="12" :md="6">
@@ -357,10 +360,12 @@ import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, House, CircleCheck, User, Warning } from '@element-plus/icons-vue'
 import { getRoomList, addRoom, updateRoom, deleteRoom, getAvailableRooms, getRoomById } from '@/api/room'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 export default {
   name: 'Room',
   components: {
+    ArtisticBackground,
     Search, Refresh, Plus, House, CircleCheck, User, Warning
   },
   setup() {

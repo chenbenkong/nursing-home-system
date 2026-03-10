@@ -1,5 +1,8 @@
 <template>
   <div class="care-plan-container">
+    <!-- 文艺动画背景 -->
+    <ArtisticBackground />
+    
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="statistics-row">
       <el-col :xs="24" :sm="12" :md="6">
@@ -326,10 +329,12 @@ import {
 } from '@/api/carePlan'
 import { getCheckedInElders } from '@/api/elder'
 import { getEmployeesByDepartment } from '@/api/employee'
+import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 export default {
   name: 'CarePlan',
   components: {
+    ArtisticBackground,
     Search,
     Refresh,
     Plus,
