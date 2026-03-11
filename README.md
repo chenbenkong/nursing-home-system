@@ -7,7 +7,7 @@
 ## 技术栈
 
 ### 前端
-- **框架**: Vue 3 + Composition API
+- **框架**: Vue 3
 - **UI组件库**: Element Plus
 - **状态管理**: Vuex
 - **路由**: Vue Router
@@ -15,7 +15,8 @@
 - **构建工具**: Vue CLI
 
 ### 后端
-- **框架**: Spring MVC + Spring
+- **框架**: Spring Boot 3.4
+- **Java版本**: Java 17
 - **ORM框架**: MyBatis
 - **数据库**: MySQL 8.0
 - **连接池**: Druid
@@ -26,19 +27,20 @@
 
 ```
 nursing-home-system/
-├── backend/                    # 后端项目
+├── backend/                    # 后端项目（Spring Boot）
 │   ├── src/main/java/com/nursinghome/
+│   │   ├── NursingHomeApplication.java  # 启动类
 │   │   ├── controller/         # 控制器层
 │   │   ├── service/            # 业务逻辑层
 │   │   ├── mapper/             # 数据访问层
 │   │   ├── entity/             # 实体类
+│   │   ├── config/             # 配置类
 │   │   ├── util/               # 工具类
 │   │   └── interceptor/        # 拦截器
 │   ├── src/main/resources/
-│   │   ├── spring-mvc.xml      # SpringMVC配置
-│   │   ├── spring-service.xml  # Spring服务配置
-│   │   ├── mybatis-config.xml  # MyBatis配置
-│   │   └── jdbc.properties     # 数据库配置
+│   │   ├── application.yml     # 核心配置文件
+│   │   └── com/nursinghome/mapper/*.xml  # MyBatis映射文件
+│   ├── Dockerfile
 │   └── pom.xml                 # Maven配置
 ├── frontend/                   # 前端项目
 │   ├── src/
@@ -47,10 +49,16 @@ nursing-home-system/
 │   │   ├── router/             # 路由配置
 │   │   ├── store/              # 状态管理
 │   │   └── assets/             # 静态资源
+│   ├── Dockerfile
+│   ├── nginx.conf
 │   ├── package.json
 │   └── vue.config.js
-└── database/
-    └── nursing_home.sql        # 数据库脚本
+├── database/
+│   └── nursing_home.sql        # 数据库脚本
+├── docker-compose.yml          # Docker编排文件
+├── 启动说明.md                  # 启动文档
+├── 快速启动.bat                 # Windows快速启动脚本
+└── README.md                   # 项目说明
 ```
 
 ## 功能模块
@@ -109,46 +117,53 @@ nursing-home-system/
 - Node.js 16+
 - Maven 3.6+
 
-### 后端部署
+### 方式一：快速启动（Windows）
 
-1. 创建数据库并导入SQL脚本
+双击运行 `快速启动.bat`，会自动启动前后端服务。
+
+### 方式二：手动启动
+
+#### 1. 创建数据库
 ```bash
 mysql -u root -p < database/nursing_home.sql
 ```
 
-2. 修改数据库配置
-编辑 `backend/src/main/resources/jdbc.properties`:
-```properties
-jdbc.url=jdbc:mysql://localhost:3306/nursing_home
-jdbc.username=root
-jdbc.password=your_password
+#### 2. 修改数据库配置
+编辑 `backend/src/main/resources/application.yml`:
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/nursing_home
+    username: root
+    password: your_password
 ```
 
-3. 编译打包
+#### 3. 启动后端
 ```bash
 cd backend
-mvn clean package
+mvn spring-boot:run
 ```
+后端访问地址：`http://localhost:8081`
 
-4. 部署到Tomcat
-将生成的 `nursing-home-system.war` 复制到Tomcat的webapps目录
-
-### 前端部署
-
-1. 安装依赖
+#### 4. 启动前端
 ```bash
 cd frontend
 npm install
-```
-
-2. 开发模式运行
-```bash
 npm run serve
 ```
+前端访问地址：`http://localhost:8080`
 
-3. 生产构建
+### 方式三：Docker部署
+
 ```bash
-npm run build
+# 启动所有服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
 ```
 
 ## 默认账号
@@ -159,39 +174,39 @@ npm run build
 ## API接口文档
 
 ### 用户相关
-- POST `/api/user/login` - 用户登录
-- POST `/api/user/register` - 用户注册
-- GET `/api/user/info` - 获取当前用户信息
-- GET `/api/user/list` - 获取用户列表
+- POST `/user/login` - 用户登录
+- POST `/user/register` - 用户注册
+- GET `/user/info` - 获取当前用户信息
+- GET `/user/list` - 获取用户列表
 
 ### 老人相关
-- GET `/api/elder/list` - 获取老人列表（分页）
-- POST `/api/elder` - 添加老人
-- PUT `/api/elder` - 更新老人
-- DELETE `/api/elder/{id}` - 删除老人
-- PUT `/api/elder/{id}/checkin` - 办理入住
-- PUT `/api/elder/{id}/checkout` - 办理退住
+- GET `/elder/list` - 获取老人列表（分页）
+- POST `/elder` - 添加老人
+- PUT `/elder` - 更新老人
+- DELETE `/elder/{id}` - 删除老人
+- PUT `/elder/{id}/checkin` - 办理入住
+- PUT `/elder/{id}/checkout` - 办理退住
 
 ### 入住申请相关
-- GET `/api/application/list` - 获取申请列表
-- POST `/api/application` - 提交申请
-- PUT `/api/application/{id}/approve` - 审批通过
-- PUT `/api/application/{id}/reject` - 审批拒绝
+- GET `/application/list` - 获取申请列表
+- POST `/application` - 提交申请
+- PUT `/application/{id}/approve` - 审批通过
+- PUT `/application/{id}/reject` - 审批拒绝
 
 ### 护理计划相关
-- GET `/api/care-plan/list` - 获取护理计划列表
-- POST `/api/care-plan` - 创建护理计划
-- PUT `/api/care-plan/{id}/pause` - 暂停计划
-- PUT `/api/care-plan/{id}/resume` - 恢复计划
+- GET `/care-plan/list` - 获取护理计划列表
+- POST `/care-plan` - 创建护理计划
+- PUT `/care-plan/{id}/pause` - 暂停计划
+- PUT `/care-plan/{id}/resume` - 恢复计划
 
 ### 员工相关
-- GET `/api/employee/list` - 获取员工列表
-- POST `/api/employee` - 添加员工
-- PUT `/api/employee/{id}/resign` - 办理离职
+- GET `/employee/list` - 获取员工列表
+- POST `/employee` - 添加员工
+- PUT `/employee/{id}/resign` - 办理离职
 
 ## 项目特点
 
-1. **前后端分离**: 前端Vue3 + 后端SpringMVC，职责清晰
+1. **前后端分离**: 前端Vue3 + 后端Spring Boot，职责清晰
 2. **RESTful API**: 统一的接口设计规范
 3. **JWT认证**: 安全的用户认证机制
 4. **分页查询**: 大数据量分页展示

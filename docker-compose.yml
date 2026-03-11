@@ -10,16 +10,21 @@ services:
     networks:
       - nursing-network
     depends_on:
-      - tomcat
+      - backend
 
-  # 后端 + Tomcat
-  tomcat:
+  # 后端 - Spring Boot
+  backend:
     build: ./backend
-    container_name: nursing-tomcat
+    container_name: nursing-backend
+    ports:
+      - "8081:8081"
     networks:
       - nursing-network
     environment:
       - TZ=Asia/Shanghai
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/nursing_home?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=1234
 
 networks:
   nursing-network:

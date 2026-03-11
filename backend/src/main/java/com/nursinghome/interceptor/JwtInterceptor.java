@@ -3,14 +3,16 @@ package com.nursinghome.interceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nursinghome.entity.Result;
 import com.nursinghome.util.JwtUtil;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * JWT拦截器
  */
+@Component
 public class JwtInterceptor implements HandlerInterceptor {
 
     @Override

@@ -7,9 +7,7 @@ import com.nursinghome.mapper.RoomMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -100,24 +98,9 @@ public class RoomController {
         }
         
         // 查询房间入住老人
-        List<Elder> elders = roomMapper.selectEldersByRoomId(id);
+        room.setElders(roomMapper.selectEldersByRoomId(id));
         
-        // 构建返回结果
-        Map<String, Object> result = new HashMap<>();
-        result.put("id", room.getId());
-        result.put("roomNo", room.getRoomNo());
-        result.put("roomType", room.getRoomType());
-        result.put("floor", room.getFloor());
-        result.put("area", room.getArea());
-        result.put("bedCount", room.getBedCount());
-        result.put("occupiedBeds", room.getOccupiedBeds());
-        result.put("price", room.getPrice());
-        result.put("facilities", room.getFacilities());
-        result.put("status", room.getStatus());
-        result.put("remark", room.getRemark());
-        result.put("elders", elders);
-        
-        return Result.success(result);
+        return Result.success(room);
     }
 
     /**

@@ -1,9 +1,13 @@
-FROM tomcat:9-jdk11
+FROM eclipse-temurin:17-jdk-alpine
 
-# 删除默认应用
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
+# 设置工作目录
+WORKDIR /app
 
-# 复制war包
-COPY target/nursing-home-system.war /usr/local/tomcat/webapps/ROOT.war
+# 复制JAR包
+COPY target/nursing-home-system-1.0.0.jar app.jar
 
-EXPOSE 8080
+# 暴露端口
+EXPOSE 8081
+
+# 启动命令
+ENTRYPOINT ["java", "-jar", "app.jar"]

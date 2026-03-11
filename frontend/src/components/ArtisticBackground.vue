@@ -1,36 +1,24 @@
 <template>
   <div class="artistic-bg" :class="{ 'dark-mode': isDarkMode }">
     <!-- 水彩晕染效果 -->
-    <div class="watercolor watercolor-1"></div>
-    <div class="watercolor watercolor-2"></div>
-    <div class="watercolor watercolor-3"></div>
+    <div v-for="n in 3" :key="'wc-'+n" class="watercolor" :class="'watercolor-'+n"></div>
     
     <!-- 手绘线条装饰 -->
     <svg class="hand-drawn-lines" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
-      <path class="draw-line" d="M-100,200 Q400,150 800,300 T1600,200" />
-      <path class="draw-line" d="M-50,600 Q300,500 600,650 T1400,550" />
-      <path class="draw-line" d="M200,-50 Q250,300 150,600 T200,1100" />
-      <path class="draw-line" d="M1600,-30 Q1550,400 1650,700 T1600,1130" />
+      <path v-for="(d, i) in linePaths" :key="i" class="draw-line" :d="d" :style="{ animationDelay: i * 0.5 + 's' }" />
     </svg>
     
     <!-- 飘落的叶子/花瓣 -->
     <div class="floating-elements">
-      <span v-for="n in 12" :key="n" class="float-item" :class="'item-' + n"></span>
+      <span v-for="n in 12" :key="n" class="float-item" :class="'item-'+n" :style="getFloatStyle(n)"></span>
     </div>
 
     <!-- 黑夜模式星空背景 -->
     <div v-if="isDarkMode" class="night-sky">
       <div class="stars">
-        <span v-for="n in 50" :key="n" class="star" :class="'star-' + n"></span>
+        <span v-for="n in 50" :key="n" class="star" :class="'star-'+n" :style="getStarStyle(n)"></span>
       </div>
     </div>
-
-    <!-- 下雪动画 - 仅黑夜模式 -->
-    <div v-if="isDarkMode" class="snow-container">
-      <span v-for="n in 80" :key="'snow-' + n" class="snowflake" :class="'snow-' + n"></span>
-    </div>
-    
-
   </div>
 </template>
 
@@ -48,61 +36,86 @@ export default {
         isDarkMode.value = val
       }, { immediate: true })
     }
+
+    // 手绘线条路径
+    const linePaths = [
+      'M-100,200 Q400,150 800,300 T1600,200',
+      'M-50,600 Q300,500 600,650 T1400,550',
+      'M200,-50 Q250,300 150,600 T200,1100',
+      'M1600,-30 Q1550,400 1650,700 T1600,1130'
+    ]
+
+    // 飘落叶子的emoji
+    const leafEmojis = ['🍃', '🌸', '🌿']
+
+    // 获取飘落叶子的样式
+    const getFloatStyle = (n) => {
+      const emoji = leafEmojis[n % 3]
+      const fontSize = 12 + Math.random() * 10
+      const duration = 15 + Math.random() * 10
+      const delay = Math.random() * 15
+      const rotate = Math.random() * 360
+      
+      return {
+        left: `${Math.random() * 100}%`,
+        animationDuration: `${duration}s`,
+        animationDelay: `${delay}s`,
+        transform: `rotate(${rotate}deg)`,
+        '--emoji': `"${emoji}"`,
+        '--font-size': `${fontSize}px`
+      }
+    }
+
+    // 获取星星的样式
+    const getStarStyle = (n) => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 2}s`,
+      animationDuration: `${1.5 + Math.random() * 2}s`
+    })
     
-    return { isDarkMode }
+    return { isDarkMode, linePaths, getFloatStyle, getStarStyle }
   }
 }
 </script>
 
 <style scoped lang="scss">
-// 文艺配色
+// 文艺配色变量
 $mountain-teal: #4a7a7a;
 $seal-red-light: #c45c48;
 $gold-accent: #b8952e;
 
-.artistic-bg {
+// 混合器 - 水彩晕染
+@mixin watercolor($color, $size, $top, $left, $delay) {
+  position: absolute;
+  width: $size;
+  height: $size;
+  background: radial-gradient(circle, $color 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.08;
+  top: $top;
+  left: $left;
+  animation: watercolorMove 20s ease-in-out infinite;
+  animation-delay: $delay;
+}
+
+// 混合器 - 绝对定位填充
+@mixin absolute-fill {
   position: absolute;
   inset: 0;
+}
+
+.artistic-bg {
+  @include absolute-fill;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: transparent;
 
   // 水彩晕染效果
-  .watercolor {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.08;
-    animation: watercolorMove 20s ease-in-out infinite;
-
-    &-1 {
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, #409EFF 0%, transparent 70%);
-      top: -200px;
-      right: -100px;
-      animation-delay: 0s;
-    }
-
-    &-2 {
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, #67C23A 0%, transparent 70%);
-      bottom: -150px;
-      left: -100px;
-      animation-delay: -7s;
-    }
-
-    &-3 {
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, #E6A23C 0%, transparent 70%);
-      top: 40%;
-      left: 30%;
-      animation-delay: -14s;
-    }
-  }
+  .watercolor-1 { @include watercolor(#409EFF, 600px, -200px, auto, 0s); right: -100px; }
+  .watercolor-2 { @include watercolor(#67C23A, 500px, auto, -100px, -7s); bottom: -150px; }
+  .watercolor-3 { @include watercolor(#E6A23C, 400px, 40%, 30%, -14s); }
 
   @keyframes watercolorMove {
     0%, 100% { transform: translate(0, 0) scale(1); }
@@ -112,10 +125,7 @@ $gold-accent: #b8952e;
 
   // 手绘线条
   .hand-drawn-lines {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    @include absolute-fill;
     opacity: 0.06;
 
     .draw-line {
@@ -126,10 +136,6 @@ $gold-accent: #b8952e;
       stroke-dasharray: 2000;
       stroke-dashoffset: 2000;
       animation: drawLine 8s ease-out forwards;
-
-      &:nth-child(2) { animation-delay: 0.5s; }
-      &:nth-child(3) { animation-delay: 1s; }
-      &:nth-child(4) { animation-delay: 1.5s; }
     }
   }
 
@@ -139,60 +145,38 @@ $gold-accent: #b8952e;
 
   // 飘落的叶子/花瓣
   .floating-elements {
-    position: absolute;
-    inset: 0;
+    @include absolute-fill;
 
     .float-item {
       position: absolute;
       width: 20px;
       height: 20px;
       opacity: 0.3;
+      top: -30px;
+      animation: floatDown linear infinite;
 
       &::before {
-        content: '🍃';
-        font-size: 16px;
+        content: var(--emoji);
+        font-size: var(--font-size);
         position: absolute;
-      }
-
-      @for $i from 1 through 12 {
-        &.item-#{$i} {
-          left: random(100) * 1%;
-          top: -30px;
-          animation: floatDown 15s + random(10) * 1s linear infinite;
-          animation-delay: random(15) * 1s;
-          transform: rotate(random(360) * 1deg);
-
-          &::before {
-            content: if($i % 3 == 0, '🌸', if($i % 3 == 1, '🍃', '🌿'));
-            font-size: 12px + random(10) * 1px;
-          }
-        }
       }
     }
   }
 
   @keyframes floatDown {
-    0% {
-      transform: translateY(0) rotate(0deg) translateX(0);
-      opacity: 0;
-    }
+    0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
     10% { opacity: 0.3; }
     90% { opacity: 0.3; }
-    100% {
-      transform: translateY(110vh) rotate(360deg) translateX(50px);
-      opacity: 0;
-    }
+    100% { transform: translateY(110vh) rotate(360deg) translateX(50px); opacity: 0; }
   }
 
   // 星空背景
   .night-sky {
-    position: absolute;
-    inset: 0;
+    @include absolute-fill;
     overflow: hidden;
 
     .stars {
-      position: absolute;
-      inset: 0;
+      @include absolute-fill;
 
       .star {
         position: absolute;
@@ -202,22 +186,13 @@ $gold-accent: #b8952e;
         border-radius: 50%;
         opacity: 0;
         animation: starTwinkle 2s ease-in-out infinite;
-
-        @for $i from 1 through 50 {
-          &.star-#{$i} {
-            left: random(100) * 1%;
-            top: random(100) * 1%;
-            animation-delay: random(20) * 0.1s;
-            animation-duration: 1.5s + random(10) * 0.2s;
-          }
-        }
       }
     }
+  }
 
-    @keyframes starTwinkle {
-      0%, 100% { opacity: 0.3; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.2); }
-    }
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
   }
 
   // 黑夜模式样式
