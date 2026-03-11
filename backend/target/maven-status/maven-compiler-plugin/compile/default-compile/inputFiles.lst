@@ -13,6 +13,7 @@ C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursingh
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\controller\EmergencyEventController.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\controller\EmployeeController.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\controller\FamilyElderRelationController.java
+C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\controller\FeeController.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\controller\HealthRecordController.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\controller\InventoryController.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\controller\MealMenuController.java
@@ -34,6 +35,7 @@ C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursingh
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\entity\EmergencyEvent.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\entity\Employee.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\entity\FamilyElderRelation.java
+C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\entity\Fee.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\entity\HealthRecord.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\entity\Inventory.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\entity\InventoryRecord.java
@@ -58,6 +60,7 @@ C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursingh
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\mapper\EmergencyEventMapper.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\mapper\EmployeeMapper.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\mapper\FamilyElderRelationMapper.java
+C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\mapper\FeeMapper.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\mapper\HealthRecordMapper.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\mapper\InventoryMapper.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\mapper\InventoryRecordMapper.java
@@ -71,6 +74,7 @@ C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursingh
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\mapper\UserMapper.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\NursingHomeApplication.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\service\EmployeeService.java
+C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\service\FeeService.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\service\impl\EmployeeServiceImpl.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\service\impl\UserServiceImpl.java
 C:\Users\moli\Desktop\YLY\nursing-home-system\backend\src\main\java\com\nursinghome\service\UserService.java

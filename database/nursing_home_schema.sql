@@ -192,7 +192,7 @@ CREATE TABLE fee_record (
     record_no VARCHAR(20) NOT NULL UNIQUE COMMENT '记录编号',
     elder_id BIGINT NOT NULL COMMENT '老人ID',
     elder_name VARCHAR(50) COMMENT '老人姓名',
-    fee_type ENUM('ACCOMMODATION', 'CARE', 'MEAL', 'MEDICAL', 'OTHER') NOT NULL COMMENT '费用类型',
+    fee_type ENUM('ACCOMMODATION', 'MEDICAL', 'OTHER') NOT NULL COMMENT '费用类型：ACCOMMODATION-住宿费(房间表支持), MEDICAL-医疗费(药品表支持), OTHER-其他费用',
     fee_month VARCHAR(7) NOT NULL COMMENT '费用月份(yyyy-MM)',
     amount DECIMAL(10,2) NOT NULL COMMENT '金额',
     paid_amount DECIMAL(10,2) DEFAULT 0 COMMENT '已付金额',

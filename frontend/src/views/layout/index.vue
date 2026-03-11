@@ -178,7 +178,8 @@ import {
   Clock,
   House,
   Sunny,
-  Moon
+  Moon,
+  Money
 } from '@element-plus/icons-vue'
 
 // 手绘风格头像列表
@@ -338,7 +339,8 @@ export default {
       { path: '/elder-meal', title: '老人膳食', icon: Food },
       { path: '/health', title: '健康管理', icon: FirstAidKit },
       { path: '/physical-exam', title: '体检记录', icon: FirstAidKit },
-      { path: '/inventory', title: '库存管理', icon: Box }
+      { path: '/inventory', title: '库存管理', icon: Box },
+      { path: '/fee', title: '费用管理', icon: Money }
     ]
 
     const toggleSidebar = () => {

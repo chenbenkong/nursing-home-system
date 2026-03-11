@@ -214,6 +214,17 @@
       <el-form ref="stockOutFormRef" :model="stockOutForm" :rules="stockOutRules" label-width="100px">
         <el-form-item label="物资"><el-input v-model="currentItem.name" disabled /></el-form-item>
         <el-form-item label="当前库存"><el-input v-model="currentItem.stock" disabled /></el-form-item>
+        <el-form-item label="关联老人" prop="elderId">
+          <el-select v-model="stockOutForm.elderId" placeholder="请选择老人（可选）" clearable filterable style="width: 100%">
+            <el-option
+              v-for="elder in elderList"
+              :key="elder.id"
+              :label="elder.name"
+              :value="elder.id"
+            />
+          </el-select>
+          <div class="form-tip">选择老人后，会自动生成该老人的物资费用</div>
+        </el-form-item>
         <el-form-item label="出库数量" prop="quantity">
           <el-input-number v-model="stockOutForm.quantity" :min="1" :max="currentItem.stock" style="width: 100%" />
         </el-form-item>
@@ -245,6 +256,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Warning, Box, CircleCheck, FirstAidKit } from '@element-plus/icons-vue'
 import { getInventoryList, addInventory, updateInventory, deleteInventory, stockIn, stockOut, getLowStockInventories } from '@/api/inventory'
+import { getElderList } from '@/api/elder'
 import ArtisticBackground from '@/components/ArtisticBackground.vue'
 
 const loading = ref(false)
@@ -281,11 +293,14 @@ const stockInRules = { quantity: [{ required: true, message: '请输入入库数
 
 const stockOutDialogVisible = ref(false)
 const stockOutFormRef = ref(null)
-const stockOutForm = reactive({ itemId: null, quantity: 1, purpose: '' })
+const stockOutForm = reactive({ itemId: null, quantity: 1, elderId: null, purpose: '' })
 const stockOutRules = { quantity: [{ required: true, message: '请输入出库数量', trigger: 'blur' }] }
 
 const lowStockDialogVisible = ref(false)
 const lowStockList = ref([])
+
+// 老人列表（用于出库关联）
+const elderList = ref([])
 
 const categoryMap = { MEDICAL: '医疗', NURSING: '护理', OFFICE: '办公', FOOD: '食品', DAILY: '日用品', OTHER: '其他' }
 const categoryTypeMap = { MEDICAL: 'danger', NURSING: 'warning', OFFICE: 'primary', FOOD: 'success', DAILY: 'info', OTHER: '' }
@@ -360,7 +375,27 @@ const handleStockInSubmit = async () => {
   finally { stockInLoading.value = false }
 }
 
-const handleStockOut = (row) => { currentItem.value = row; stockOutForm.itemId = row.id; stockOutForm.quantity = 1; stockOutDialogVisible.value = true }
+const handleStockOut = (row) => {
+  currentItem.value = row
+  stockOutForm.itemId = row.id
+  stockOutForm.quantity = 1
+  stockOutForm.elderId = null
+  // 加载老人列表
+  loadElderList()
+  stockOutDialogVisible.value = true
+}
+
+// 加载老人列表
+const loadElderList = async () => {
+  try {
+    const res = await getElderList({ pageNum: 1, pageSize: 1000 })
+    if (res.code === 200) {
+      elderList.value = res.data.list || res.data || []
+    }
+  } catch (error) {
+    console.error('加载老人列表失败', error)
+  }
+}
 const handleStockOutSubmit = async () => {
   const valid = await stockOutFormRef.value.validate().catch(() => false)
   if (!valid) return
@@ -434,4 +469,5 @@ onMounted(() => { fetchInventoryList() })
 .pagination-container { margin-top: 20px; display: flex; justify-content: flex-end; }
 .text-danger { color: #f56c6c; }
 .ml-2 { margin-left: 8px; }
+.form-tip { font-size: 12px; color: #909399; margin-top: 5px; }
 </style>

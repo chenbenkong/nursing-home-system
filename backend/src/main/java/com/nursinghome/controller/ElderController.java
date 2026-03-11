@@ -8,6 +8,7 @@ import com.nursinghome.entity.Result;
 import com.nursinghome.entity.Room;
 import com.nursinghome.mapper.ElderMapper;
 import com.nursinghome.mapper.RoomMapper;
+import com.nursinghome.service.FeeService;
 import com.nursinghome.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,9 @@ public class ElderController {
     
     @Autowired
     private RoomMapper roomMapper;
+    
+    @Autowired
+    private FeeService feeService;
 
     /**
      * 获取老人列表（分页）
@@ -182,28 +186,36 @@ public class ElderController {
             return Result.error("已入住的老人必须分配房间");
         }
         
-        // 处理换房逻辑：如果房间变更，更新房间占用情况
+        // 处理换房逻辑：如果房间变更，更新房间占用情况和费用
         Long oldRoomId = existElder.getRoomId();
         Long newRoomId = elder.getRoomId();
+        java.math.BigDecimal priceDiff = java.math.BigDecimal.ZERO;
         
         if (newRoomId != null && !newRoomId.equals(oldRoomId)) {
+            Room oldRoom = null;
+            Room newRoom = null;
+            
             // 1. 减少旧房间的占用数
             if (oldRoomId != null) {
-                Room oldRoom = roomMapper.selectById(oldRoomId);
-                if (oldRoom != null && oldRoom.getOccupiedBeds() > 0) {
-                    int newOccupiedBeds = oldRoom.getOccupiedBeds() - 1;
-                    String newStatus = Room.STATUS_AVAILABLE;
-                    roomMapper.updateOccupiedBeds(oldRoomId, newOccupiedBeds, newStatus);
+                oldRoom = roomMapper.selectById(oldRoomId);
+                if (oldRoom != null) {
+                    int occupiedBeds = oldRoom.getOccupiedBeds() != null ? oldRoom.getOccupiedBeds() : 0;
+                    if (occupiedBeds > 0) {
+                        int newOccupiedBeds = occupiedBeds - 1;
+                        String newStatus = Room.STATUS_AVAILABLE;
+                        roomMapper.updateOccupiedBeds(oldRoomId, newOccupiedBeds, newStatus);
+                    }
                 }
             }
             
             // 2. 增加新房间的占用数
-            Room newRoom = roomMapper.selectById(newRoomId);
+            newRoom = roomMapper.selectById(newRoomId);
             if (newRoom != null) {
-                if (newRoom.getOccupiedBeds() >= newRoom.getBedCount()) {
+                int occupiedBeds = newRoom.getOccupiedBeds() != null ? newRoom.getOccupiedBeds() : 0;
+                if (occupiedBeds >= newRoom.getBedCount()) {
                     return Result.error("新房间已满，请选择其他房间");
                 }
-                int newOccupiedBeds = newRoom.getOccupiedBeds() + 1;
+                int newOccupiedBeds = occupiedBeds + 1;
                 String newStatus;
                 if (newOccupiedBeds >= newRoom.getBedCount()) {
                     newStatus = Room.STATUS_OCCUPIED;
@@ -212,10 +224,33 @@ public class ElderController {
                 }
                 roomMapper.updateOccupiedBeds(newRoomId, newOccupiedBeds, newStatus);
             }
+            
+            // 3. 处理换房费用
+            if (oldRoom != null && newRoom != null) {
+                // 使用数据库中已存在的老人姓名，而不是请求体中的（可能为空）
+                String elderName = existElder.getName();
+                priceDiff = feeService.handleRoomChangeFee(
+                    elder.getId(),
+                    elderName,
+                    oldRoom.getPrice(),
+                    newRoom.getPrice()
+                );
+            }
         }
         
         elderMapper.update(elder);
-        return Result.success("更新成功", null);
+        
+        // 返回换房结果，包括费用差异信息
+        Map<String, Object> result = new HashMap<>();
+        result.put("priceDiff", priceDiff);
+        if (priceDiff.compareTo(java.math.BigDecimal.ZERO) > 0) {
+            result.put("message", "换房成功，新房比旧房贵" + priceDiff + "元，请补缴差价");
+        } else if (priceDiff.compareTo(java.math.BigDecimal.ZERO) < 0) {
+            result.put("message", "换房成功，新房比旧房便宜" + priceDiff.abs() + "元，已生成退款记录");
+        } else {
+            result.put("message", "换房成功");
+        }
+        return Result.success(result.get("message").toString(), result);
     }
 
     /**
@@ -276,12 +311,13 @@ public class ElderController {
             if (room == null) {
                 return Result.error("房间不存在");
             }
-            if (room.getOccupiedBeds() >= room.getBedCount()) {
+            int occupiedBeds = room.getOccupiedBeds() != null ? room.getOccupiedBeds() : 0;
+            if (occupiedBeds >= room.getBedCount()) {
                 return Result.error("该房间已满，请选择其他房间");
             }
             
             // 更新房间占用情况
-            int newOccupiedBeds = room.getOccupiedBeds() + 1;
+            int newOccupiedBeds = occupiedBeds + 1;
             String newStatus;
             if (newOccupiedBeds >= room.getBedCount()) {
                 newStatus = Room.STATUS_OCCUPIED;
@@ -333,10 +369,13 @@ public class ElderController {
         Long roomId = elder.getRoomId();
         if (roomId != null) {
             Room room = roomMapper.selectById(roomId);
-            if (room != null && room.getOccupiedBeds() > 0) {
-                int newOccupiedBeds = room.getOccupiedBeds() - 1;
-                String newStatus = Room.STATUS_AVAILABLE;
-                roomMapper.updateOccupiedBeds(roomId, newOccupiedBeds, newStatus);
+            if (room != null) {
+                int occupiedBeds = room.getOccupiedBeds() != null ? room.getOccupiedBeds() : 0;
+                if (occupiedBeds > 0) {
+                    int newOccupiedBeds = occupiedBeds - 1;
+                    String newStatus = Room.STATUS_AVAILABLE;
+                    roomMapper.updateOccupiedBeds(roomId, newOccupiedBeds, newStatus);
+                }
             }
         }
         

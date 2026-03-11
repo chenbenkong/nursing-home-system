@@ -6,8 +6,10 @@ import com.nursinghome.entity.Inventory;
 import com.nursinghome.entity.InventoryRecord;
 import com.nursinghome.entity.PageResult;
 import com.nursinghome.entity.Result;
+import com.nursinghome.mapper.ElderMapper;
 import com.nursinghome.mapper.InventoryMapper;
 import com.nursinghome.mapper.InventoryRecordMapper;
+import com.nursinghome.service.FeeService;
 import com.nursinghome.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,12 @@ public class InventoryController {
     
     @Autowired
     private InventoryRecordMapper inventoryRecordMapper;
+    
+    @Autowired
+    private ElderMapper elderMapper;
+    
+    @Autowired
+    private FeeService feeService;
 
     @GetMapping("/list")
     public Result getInventoryList(
@@ -146,9 +154,34 @@ public class InventoryController {
         if (params.get("operatorId") != null) record.setOperatorId(Long.valueOf(params.get("operatorId").toString()));
         record.setOperatorName((String) params.get("operatorName"));
         record.setOperateTime(LocalDateTime.now());
+        
+        // 关联老人（如果指定了老人ID）
+        Long elderId = null;
+        String elderName = null;
+        if (params.get("elderId") != null) {
+            elderId = Long.valueOf(params.get("elderId").toString());
+            com.nursinghome.entity.Elder elder = elderMapper.selectById(elderId);
+            if (elder != null) {
+                elderName = elder.getName();
+                record.setRelatedId(elderId);
+                record.setRelatedName(elderName);
+            }
+        }
+        
         inventoryRecordMapper.insert(record);
         
-        return Result.success("出库成功", record);
+        // 自动生成物资费（如果关联了老人且有价格）
+        if (elderId != null && inventory.getPrice() != null) {
+            feeService.generateSupplyFee(
+                elderId,
+                elderName,
+                inventory.getPrice(),
+                quantity,
+                record.getId()
+            );
+        }
+        
+        return Result.success("出库成功" + (elderId != null && inventory.getPrice() != null ? "，已自动生成物资费" : ""), record);
     }
 
     @GetMapping("/low-stock")

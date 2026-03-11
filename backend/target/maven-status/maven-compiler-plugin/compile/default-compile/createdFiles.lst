@@ -14,6 +14,7 @@ com\nursinghome\entity\SysConfig.class
 com\nursinghome\controller\CheckInApplicationController.class
 com\nursinghome\controller\OperationLogController.class
 com\nursinghome\controller\RoomController.class
+com\nursinghome\entity\Fee.class
 com\nursinghome\entity\EmergencyEvent.class
 com\nursinghome\mapper\InventoryRecordMapper.class
 com\nursinghome\controller\MealMenuController.class
@@ -48,11 +49,13 @@ com\nursinghome\controller\MedicineController.class
 com\nursinghome\entity\FamilyElderRelation.class
 com\nursinghome\mapper\OperationLogMapper.class
 com\nursinghome\interceptor\JwtInterceptor.class
+com\nursinghome\mapper\FeeMapper.class
 com\nursinghome\entity\Bed.class
 com\nursinghome\entity\PhysicalExam.class
 com\nursinghome\service\UserService.class
 com\nursinghome\controller\UserController.class
 com\nursinghome\entity\Employee.class
+com\nursinghome\controller\FeeController.class
 com\nursinghome\config\WebConfig.class
 com\nursinghome\controller\ElderController.class
 com\nursinghome\controller\MedicationRecordController.class
@@ -60,7 +63,9 @@ com\nursinghome\controller\SysConfigController.class
 com\nursinghome\service\impl\UserServiceImpl.class
 com\nursinghome\mapper\MedicationRecordMapper.class
 com\nursinghome\entity\ActivityParticipant.class
+com\nursinghome\service\FeeService.class
 com\nursinghome\mapper\ElderMealMapper.class
+com\nursinghome\entity\Fee$PayMethod.class
 com\nursinghome\entity\HealthRecord.class
 com\nursinghome\mapper\InventoryMapper.class
 com\nursinghome\entity\MedicationRecord.class
@@ -70,11 +75,13 @@ com\nursinghome\controller\ActivityController.class
 com\nursinghome\entity\Activity.class
 com\nursinghome\mapper\ElderMedicationMapper.class
 com\nursinghome\service\EmployeeService.class
+com\nursinghome\entity\Fee$FeeStatus.class
 com\nursinghome\mapper\ActivityParticipantMapper.class
 com\nursinghome\entity\Inventory.class
 com\nursinghome\controller\EmployeeController.class
 com\nursinghome\controller\InventoryController.class
 com\nursinghome\mapper\EmergencyEventMapper.class
+com\nursinghome\entity\Fee$FeeType.class
 com\nursinghome\entity\InventoryRecord.class
 com\nursinghome\controller\ElderMealController.class
 com\nursinghome\entity\Room.class

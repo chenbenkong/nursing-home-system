@@ -25,8 +25,10 @@ public interface RoomMapper {
     
     /**
      * 查询可用房间（有空闲床位）
+     * 包括 AVAILABLE 和 OCCUPIED 状态（非满房），排除 MAINTENANCE 和 RESERVED
+     * 使用 COALESCE 处理 NULL 值，将 NULL 视为 0
      */
-    @Select("SELECT * FROM room WHERE status != 'MAINTENANCE' AND occupied_beds < bed_count ORDER BY room_no")
+    @Select("SELECT * FROM room WHERE status IN ('AVAILABLE', 'OCCUPIED') AND COALESCE(occupied_beds, 0) < bed_count ORDER BY room_no")
     List<Room> selectAvailableRooms();
     
     /**

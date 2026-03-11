@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursinghome.mapper.FeeMapper">
+    
+    <resultMap id="BaseResultMap" type="com.nursinghome.entity.Fee">
+        <id column="id" property="id"/>
+        <result column="record_no" property="recordNo"/>
+        <result column="elder_id" property="elderId"/>
+        <result column="elder_name" property="elderName"/>
+        <result column="fee_type" property="feeType" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="fee_month" property="feeMonth"/>
+        <result column="amount" property="amount"/>
+        <result column="paid_amount" property="paidAmount"/>
+        <result column="status" property="status" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="due_date" property="dueDate"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="pay_method" property="payMethod" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, record_no, elder_id, elder_name, fee_type, fee_month, amount, paid_amount,
+        status, due_date, pay_time, pay_method, create_by, create_time, update_time, remark
+    </sql>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM fee_record
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM fee_record
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="selectByPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM fee_record
+        <where>
+            <if test="elderId != null">
+                AND elder_id = #{elderId}
+            </if>
+            <if test="feeType != null and feeType != ''">
+                AND fee_type = #{feeType}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="feeMonth != null and feeMonth != ''">
+                AND fee_month = #{feeMonth}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="selectByElderId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM fee_record
+        WHERE elder_id = #{elderId}
+        ORDER BY fee_month DESC, create_time DESC
+    </select>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO fee_record (
+            record_no, elder_id, elder_name, fee_type, fee_month, amount,
+            paid_amount, status, due_date, create_by, remark
+        ) VALUES (
+            #{recordNo}, #{elderId}, #{elderName}, #{feeType}, #{feeMonth}, #{amount},
+            0, 'UNPAID', #{dueDate}, #{createBy}, #{remark}
+        )
+    </insert>
+    
+    <update id="update">
+        UPDATE fee_record
+        <set>
+            <if test="elderId != null">elder_id = #{elderId},</if>
+            <if test="elderName != null">elder_name = #{elderName},</if>
+            <if test="feeType != null">fee_type = #{feeType},</if>
+            <if test="feeMonth != null">fee_month = #{feeMonth},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="paidAmount != null">paid_amount = #{paidAmount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="dueDate != null">due_date = #{dueDate},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM fee_record WHERE id = #{id}
+    </delete>
+    
+    <update id="payFee">
+        UPDATE fee_record
+        SET paid_amount = paid_amount + #{payAmount},
+            status = CASE 
+                WHEN paid_amount + #{payAmount} >= amount THEN 'PAID'
+                WHEN paid_amount + #{payAmount} > 0 THEN 'PARTIAL'
+                ELSE 'UNPAID'
+            END,
+            pay_time = NOW(),
+            pay_method = #{payMethod}
+        WHERE id = #{id}
+    </update>
+    
+    <select id="sumAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount), 0)
+        FROM fee_record
+        <where>
+            AND amount &gt; 0
+            <if test="feeMonth != null and feeMonth != ''">
+                AND fee_month = #{feeMonth}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="sumPaidAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(paid_amount), 0)
+        FROM fee_record
+        <where>
+            AND amount &gt; 0
+            <if test="feeMonth != null and feeMonth != ''">
+                AND fee_month = #{feeMonth}
+            </if>
+        </where>
+    </select>
+
+    <select id="sumUnpaidAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount - paid_amount), 0)
+        FROM fee_record
+        WHERE amount &gt; 0 
+        AND status IN ('UNPAID', 'PARTIAL', 'OVERDUE')
+        <if test="feeMonth != null and feeMonth != ''">
+            AND fee_month = #{feeMonth}
+        </if>
+    </select>
+
+    <!-- 应退总额（退款记录的金额绝对值） -->
+    <select id="sumRefundAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(ABS(amount)), 0)
+        FROM fee_record
+        <where>
+            AND amount &lt; 0
+            <if test="feeMonth != null and feeMonth != ''">
+                AND fee_month = #{feeMonth}
+            </if>
+        </where>
+    </select>
+
+    <!-- 已退总额 -->
+    <select id="sumRefundedAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(paid_amount), 0)
+        FROM fee_record
+        <where>
+            AND amount &lt; 0
+            <if test="feeMonth != null and feeMonth != ''">
+                AND fee_month = #{feeMonth}
+            </if>
+        </where>
+    </select>
+
+    <!-- 未退总额 -->
+    <select id="sumUnrefundedAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(ABS(amount) - paid_amount), 0)
+        FROM fee_record
+        WHERE amount &lt; 0 
+        AND status IN ('UNREFUNDED', 'PARTIAL_REFUNDED')
+        <if test="feeMonth != null and feeMonth != ''">
+            AND fee_month = #{feeMonth}
+        </if>
+    </select>
+    
+    <select id="countOverdueElders" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT elder_id)
+        FROM fee_record
+        WHERE status IN ('UNPAID', 'PARTIAL', 'OVERDUE')
+        <if test="feeMonth != null and feeMonth != ''">
+            AND fee_month = #{feeMonth}
+        </if>
+    </select>
+
+    <!-- 统计未退款老人数量 -->
+    <select id="countUnrefundedElders" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT elder_id)
+        FROM fee_record
+        WHERE amount &lt; 0
+        AND status IN ('UNREFUNDED', 'PARTIAL_REFUNDED')
+        <if test="feeMonth != null and feeMonth != ''">
+            AND fee_month = #{feeMonth}
+        </if>
+    </select>
+    
+    <select id="selectCurrentMonthReceivable" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount), 0)
+        FROM fee_record
+        WHERE fee_month = DATE_FORMAT(CURDATE(), '%Y-%m')
+    </select>
+    
+    <select id="selectCurrentMonthReceived" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(paid_amount), 0)
+        FROM fee_record
+        WHERE fee_month = DATE_FORMAT(CURDATE(), '%Y-%m')
+    </select>
+    
+</mapper>

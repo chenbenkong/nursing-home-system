@@ -723,7 +723,15 @@ export default {
         })
 
         if (res.code === 200) {
-          ElMessage.success('换房成功')
+          // 显示费用差异信息
+          const priceDiff = res.data?.priceDiff || 0
+          if (priceDiff > 0) {
+            ElMessage.success(`换房成功，新房比旧房贵${priceDiff}元，请补缴差价`)
+          } else if (priceDiff < 0) {
+            ElMessage.success(`换房成功，新房比旧房便宜${Math.abs(priceDiff)}元，已生成退款记录`)
+          } else {
+            ElMessage.success('换房成功')
+          }
           changeRoomDialogVisible.value = false
           fetchData()
         } else {

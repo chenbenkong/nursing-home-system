@@ -126,7 +126,7 @@ public class RoomController {
         if (room.getStatus() != null && !room.getStatus().equals(existRoom.getStatus())) {
             String oldStatus = existRoom.getStatus();
             String newStatus = room.getStatus();
-            int occupiedBeds = existRoom.getOccupiedBeds();
+            int occupiedBeds = existRoom.getOccupiedBeds() != null ? existRoom.getOccupiedBeds() : 0;
             
             // 如果有老人入住，不能改为空闲或维修中
             if (occupiedBeds > 0) {

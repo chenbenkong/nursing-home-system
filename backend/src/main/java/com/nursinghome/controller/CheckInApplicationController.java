@@ -10,6 +10,7 @@ import com.nursinghome.entity.Room;
 import com.nursinghome.mapper.CheckInApplicationMapper;
 import com.nursinghome.mapper.ElderMapper;
 import com.nursinghome.mapper.RoomMapper;
+import com.nursinghome.service.FeeService;
 import com.nursinghome.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,9 @@ public class CheckInApplicationController {
     
     @Autowired
     private RoomMapper roomMapper;
+    
+    @Autowired
+    private FeeService feeService;
 
     /**
      * 获取申请列表（分页）
@@ -160,10 +164,13 @@ public class CheckInApplicationController {
                     // 如果老人已入住，需要更新房间占用情况
                     if (Elder.STATUS_CHECKED_IN.equals(elder.getStatus()) && elder.getRoomId() != null) {
                         Room room = roomMapper.selectById(elder.getRoomId());
-                        if (room != null && room.getOccupiedBeds() > 0) {
-                            int newOccupiedBeds = room.getOccupiedBeds() - 1;
-                            String newStatus = Room.STATUS_AVAILABLE;
-                            roomMapper.updateOccupiedBeds(elder.getRoomId(), newOccupiedBeds, newStatus);
+                        if (room != null) {
+                            int occupiedBeds = room.getOccupiedBeds() != null ? room.getOccupiedBeds() : 0;
+                            if (occupiedBeds > 0) {
+                                int newOccupiedBeds = occupiedBeds - 1;
+                                String newStatus = Room.STATUS_AVAILABLE;
+                                roomMapper.updateOccupiedBeds(elder.getRoomId(), newOccupiedBeds, newStatus);
+                            }
                         }
                     }
                     // 删除老人记录
@@ -219,7 +226,8 @@ public class CheckInApplicationController {
             if (room == null) {
                 return Result.error("房间不存在");
             }
-            if (room.getOccupiedBeds() >= room.getBedCount()) {
+            int occupiedBeds = room.getOccupiedBeds() != null ? room.getOccupiedBeds() : 0;
+            if (occupiedBeds >= room.getBedCount()) {
                 return Result.error("该房间已满，请选择其他房间");
             }
             
@@ -283,7 +291,7 @@ public class CheckInApplicationController {
             }
             
             // 更新房间占用情况
-            int newOccupiedBeds = room.getOccupiedBeds() + 1;
+            int newOccupiedBeds = occupiedBeds + 1;
             String newStatus;
             if (newOccupiedBeds >= room.getBedCount()) {
                 newStatus = Room.STATUS_OCCUPIED; // 已满
@@ -302,7 +310,17 @@ public class CheckInApplicationController {
             
             applicationMapper.update(updateApp);
             
-            return Result.success("审批通过，已自动创建老人档案", elder);
+            // 自动生成住宿费（使用前面获取的room）
+            if (room != null && room.getPrice() != null) {
+                feeService.generateAccommodationFee(
+                    elder.getId(),
+                    elder.getName(),
+                    room.getPrice(),
+                    id
+                );
+            }
+            
+            return Result.success("审批通过，已自动创建老人档案并生成住宿费", elder);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("审批失败：" + e.getMessage(), e);

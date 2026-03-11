@@ -117,6 +117,12 @@ const routes = [
         component: () => import('../views/family-relation/index.vue'),
         meta: { title: '家属关联', icon: 'User' }
       },
+      {
+        path: 'fee',
+        name: 'Fee',
+        component: () => import('../views/fee/index.vue'),
+        meta: { title: '费用管理', icon: 'Money' }
+      },
 
     ]
   },

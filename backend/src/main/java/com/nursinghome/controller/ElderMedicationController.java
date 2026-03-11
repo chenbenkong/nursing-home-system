@@ -7,7 +7,9 @@ import com.nursinghome.entity.Medicine;
 import com.nursinghome.entity.PageResult;
 import com.nursinghome.entity.Result;
 import com.nursinghome.mapper.ElderMedicationMapper;
+import com.nursinghome.mapper.ElderMapper;
 import com.nursinghome.mapper.MedicineMapper;
+import com.nursinghome.service.FeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +30,12 @@ public class ElderMedicationController {
     
     @Autowired
     private MedicineMapper medicineMapper;
+    
+    @Autowired
+    private ElderMapper elderMapper;
+    
+    @Autowired
+    private FeeService feeService;
 
     /**
      * 获取用药记录列表（分页）
@@ -117,15 +125,32 @@ public class ElderMedicationController {
         }
         
         // 获取药品信息
+        Medicine medicine = null;
         if (elderMedication.getMedicineId() != null) {
-            Medicine medicine = medicineMapper.selectById(elderMedication.getMedicineId());
+            medicine = medicineMapper.selectById(elderMedication.getMedicineId());
             if (medicine != null) {
                 elderMedication.setMedicineName(medicine.getName());
             }
         }
         
         elderMedicationMapper.insert(elderMedication);
-        return Result.success("添加成功", elderMedication);
+        
+        // 自动生成医疗费
+        if (medicine != null && medicine.getPrice() != null) {
+            // 获取老人姓名
+            com.nursinghome.entity.Elder elder = elderMapper.selectById(elderMedication.getElderId());
+            String elderName = elder != null ? elder.getName() : "";
+            
+            feeService.generateMedicalFee(
+                elderMedication.getElderId(),
+                elderName,
+                medicine.getPrice(),
+                1, // 默认数量为1
+                elderMedication.getId()
+            );
+        }
+        
+        return Result.success("添加成功，已自动生成医疗费", elderMedication);
     }
 
     /**

@@ -551,20 +551,36 @@ export default {
         
         if (res.code === 200) {
           // 处理后端返回的数据，将字段名转换为前端使用的格式
-          const rooms = (res.data.list || res.data).map(room => ({
-            id: room.id,
-            roomNumber: room.roomNo,
-            floor: room.floor,
-            roomType: room.roomType,
-            capacity: room.bedCount,
-            occupied: room.occupiedBeds || 0,
-            price: room.price,
-            status: room.status,
-            facilities: room.facilities ? room.facilities.split(/[,，、]/).map(f => f.trim()).filter(f => f) : [],
-            remark: room.remark,
-            // 生成床位数据（根据实际老人信息）
-            beds: generateBedsWithElders(room.id, room.roomNo, room.bedCount, room.occupiedBeds || 0, room.elders || [])
-          }))
+          const rooms = (res.data.list || res.data).map(room => {
+            const capacity = room.bedCount || 0
+            const occupied = room.occupiedBeds || 0
+            // 根据实际占用情况计算状态
+            let calculatedStatus = room.status
+            if (room.status !== 'MAINTENANCE') { // 维修状态保持不变
+              if (occupied === 0) {
+                calculatedStatus = 'AVAILABLE'
+              } else if (occupied >= capacity) {
+                calculatedStatus = 'FULL'
+              } else {
+                calculatedStatus = 'PARTIAL'
+              }
+            }
+            
+            return {
+              id: room.id,
+              roomNumber: room.roomNo,
+              floor: room.floor,
+              roomType: room.roomType,
+              capacity: capacity,
+              occupied: occupied,
+              price: room.price,
+              status: calculatedStatus,
+              facilities: room.facilities ? room.facilities.split(/[,，、]/).map(f => f.trim()).filter(f => f) : [],
+              remark: room.remark,
+              // 生成床位数据（根据实际老人信息）
+              beds: generateBedsWithElders(room.id, room.roomNo, capacity, occupied, room.elders || [])
+            }
+          })
           
           roomList.value = rooms
           total.value = res.data.total || rooms.length
