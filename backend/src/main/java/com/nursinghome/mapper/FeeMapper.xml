@@ -71,7 +71,7 @@
             paid_amount, status, due_date, create_by, remark
         ) VALUES (
             #{recordNo}, #{elderId}, #{elderName}, #{feeType}, #{feeMonth}, #{amount},
-            0, 'UNPAID', #{dueDate}, #{createBy}, #{remark}
+            #{paidAmount}, #{status}, #{dueDate}, #{createBy}, #{remark}
         )
     </insert>
     
@@ -86,6 +86,8 @@
             <if test="paidAmount != null">paid_amount = #{paidAmount},</if>
             <if test="status != null">status = #{status},</if>
             <if test="dueDate != null">due_date = #{dueDate},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="payMethod != null">pay_method = #{payMethod},</if>
             <if test="remark != null">remark = #{remark},</if>
         </set>
         WHERE id = #{id}
