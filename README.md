@@ -1,162 +1,231 @@
 # 养老院管理系统
 
-## 项目概述
+> 一个基于 Spring Boot + Vue3 的养老院综合管理系统，帮助养老院提升运营效率和服务质量。
 
-本项目使用阿里云部署的openclaw实现从0到1的全自动开发，模型调用kimi2.5。针对养老院运营效率与服务管理的挑战，本项目开发了一套前后端分离的综合管理系统，解决养老院客户管理、服务流程（如入住申请、护理计划）、员工工作管理等核心业务痛点，提升运营效率与服务质量。
+[![Java](https://img.shields.io/badge/Java-17+-blue.svg)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4-green.svg)](https://spring.io/projects/spring-boot)
+[![Vue](https://img.shields.io/badge/Vue-3-4FC08D.svg)](https://vuejs.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)](https://www.mysql.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## 技术栈
+---
 
-### 前端
-- **框架**: Vue 3
-- **UI组件库**: Element Plus
-- **状态管理**: Vuex
-- **路由**: Vue Router
-- **HTTP客户端**: Axios
-- **构建工具**: Vue CLI
+## 📖 项目简介
 
-### 后端
-- **框架**: Spring Boot 3.4
-- **Java版本**: Java 17
-- **ORM框架**: MyBatis
-- **数据库**: MySQL 8.0
-- **连接池**: Druid
-- **安全**: JWT Token认证
-- **构建工具**: Maven
+本项目是一个完整的养老院管理解决方案，涵盖老人管理、入住申请、护理计划、费用管理、员工管理等核心业务模块。系统采用前后端分离架构，界面美观，操作简便。
 
-## 项目结构
+### 核心功能
+
+| 模块 | 功能说明 |
+|------|---------|
+| 👥 **老人管理** | 老人信息录入、健康状况跟踪、入住/退住办理 |
+| 📝 **入住申请** | 在线申请、审批流程、状态跟踪 |
+| 💊 **护理计划** | 个性化护理方案、用药管理、饮食计划 |
+| 💰 **费用管理** | 自动费用生成、缴费/退款、费用统计 |
+| 👨‍⚕️ **员工管理** | 员工信息、部门管理、入职/离职 |
+| 🏠 **房间管理** | 房间分配、换房、容量管理 |
+| 📊 **数据统计** | 可视化数据展示、经营分析 |
+
+---
+
+## 🚀 快速开始
+
+### 环境要求
+
+| 软件 | 版本 | 说明 |
+|------|------|------|
+| JDK | 17+ | Java运行环境 |
+| MySQL | 8.0+ | 数据存储 |
+| Node.js | 16+ | 前端运行环境 |
+| Maven | 3.6+ | 项目构建工具 |
+
+### 1. 克隆项目
+
+```bash
+git clone https://github.com/your-repo/nursing-home-system.git
+cd nursing-home-system
+```
+
+### 2. 数据库配置
+
+```bash
+# 登录MySQL
+mysql -u root -p
+
+# 创建数据库
+CREATE DATABASE nursing_home DEFAULT CHARACTER SET utf8mb4;
+
+# 导入数据（退出MySQL后执行）
+mysql -u root -p nursing_home < database/nursing_home.sql
+```
+
+### 3. 修改配置
+
+编辑 `backend/src/main/resources/application.yml`：
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/nursing_home
+    username: root
+    password: 你的密码
+```
+
+### 4. 启动项目
+
+**Windows用户（推荐）：**
+```bash
+双击运行：快速启动.bat
+```
+
+**手动启动：**
+
+```bash
+# 终端1：启动后端
+cd backend
+mvn spring-boot:run
+
+# 终端2：启动前端
+cd frontend
+npm install
+npm run serve
+```
+
+### 5. 访问系统
+
+- 前端地址：http://localhost:8080
+- 后端地址：http://localhost:8081
+- 默认账号：admin / 123456
+
+---
+
+## 📸 系统截图
+
+> 这里可以添加系统界面截图
+
+---
+
+## 🛠️ 技术栈
+
+### 后端技术
+
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| Spring Boot | 3.4.0 | 核心框架 |
+| MyBatis | 3.0.4 | ORM框架 |
+| MySQL | 8.0 | 数据库 |
+| Druid | 1.2.23 | 连接池 |
+| JWT | 0.12.6 | 身份认证 |
+| Maven | 3.6+ | 构建工具 |
+
+### 前端技术
+
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| Vue | 3.x | 前端框架 |
+| Element Plus | 2.x | UI组件库 |
+| Vue Router | 4.x | 路由管理 |
+| Vuex | 4.x | 状态管理 |
+| Axios | 1.x | HTTP请求 |
+| ECharts | 5.x | 图表库 |
+
+---
+
+## 📁 项目结构
 
 ```
 nursing-home-system/
-├── backend/                    # 后端项目（Spring Boot）
+├── backend/                    # 后端项目
 │   ├── src/main/java/com/nursinghome/
-│   │   ├── NursingHomeApplication.java  # 启动类
-│   │   ├── controller/         # 控制器层
+│   │   ├── controller/         # 控制器层（处理HTTP请求）
 │   │   ├── service/            # 业务逻辑层
-│   │   ├── mapper/             # 数据访问层
+│   │   ├── mapper/             # 数据访问层（MyBatis）
 │   │   ├── entity/             # 实体类
 │   │   ├── config/             # 配置类
 │   │   ├── util/               # 工具类
 │   │   └── interceptor/        # 拦截器
 │   ├── src/main/resources/
 │   │   ├── application.yml     # 核心配置文件
-│   │   └── com/nursinghome/mapper/*.xml  # MyBatis映射文件
+│   │   └── mapper/*.xml        # MyBatis映射文件
 │   ├── Dockerfile
-│   └── pom.xml                 # Maven配置
+│   └── pom.xml
+│
 ├── frontend/                   # 前端项目
 │   ├── src/
-│   │   ├── api/                # API接口
+│   │   ├── api/                # API接口定义
 │   │   ├── views/              # 页面组件
+│   │   ├── components/         # 公共组件
 │   │   ├── router/             # 路由配置
-│   │   ├── store/              # 状态管理
+│   │   ├── store/              # 状态管理（Vuex）
+│   │   ├── utils/              # 工具函数
 │   │   └── assets/             # 静态资源
-│   ├── Dockerfile
-│   ├── nginx.conf
 │   ├── package.json
 │   └── vue.config.js
+│
 ├── database/
-│   └── nursing_home.sql        # 数据库脚本
-├── docker-compose.yml          # Docker编排文件
-├── 启动说明.md                  # 启动文档
+│   ├── nursing_home.sql        # 数据库初始化脚本
+│   └── nursing_home_schema.sql # 数据库结构脚本
+│
+├── docker-compose.yml          # Docker编排配置
 ├── 快速启动.bat                 # Windows快速启动脚本
-└── README.md                   # 项目说明
+├── 启动说明.md                  # 详细启动文档
+└── README.md                   # 项目说明文档
 ```
 
-## 功能模块
+---
 
-### 1. 用户管理
-- 用户登录/登出（JWT认证）
-- 用户角色管理（管理员、经理、护士、医生、员工）
-- 用户增删改查
+## 📚 详细文档
 
-### 2. 老人管理
-- 老人信息录入与管理
-- 入住/退住办理
-- 健康状况跟踪
-- 护理等级管理
+- [启动说明.md](启动说明.md) - 详细的启动配置说明
+- [API文档](#) - 接口文档（待完善）
+- [开发规范](#) - 代码规范（待完善）
 
-### 3. 入住申请
-- 在线提交入住申请
-- 申请审批流程
-- 申请状态跟踪
+---
 
-### 4. 护理计划
-- 个性化护理计划制定
-- 护理计划执行跟踪
-- 饮食、用药、康复计划管理
+## 🔧 开发指南
 
-### 5. 员工管理
-- 员工信息管理
-- 部门管理
-- 入职/离职办理
+### 后端开发
 
-### 6. 仪表盘
-- 数据统计展示
-- 快捷操作入口
-- 系统公告
-
-## 数据库设计
-
-### 核心表结构
-
-1. **sys_user** - 系统用户表
-2. **elder** - 老人信息表
-3. **check_in_application** - 入住申请表
-4. **care_plan** - 护理计划表
-5. **care_record** - 护理记录表
-6. **employee** - 员工表
-7. **room** - 房间表
-8. **fee_record** - 费用记录表
-9. **visitor_record** - 访客记录表
-10. **announcement** - 公告表
-
-## 快速开始
-
-### 环境要求
-- JDK 11+
-- MySQL 8.0+
-- Node.js 16+
-- Maven 3.6+
-
-### 方式一：快速启动（Windows）
-
-双击运行 `快速启动.bat`，会自动启动前后端服务。
-
-### 方式二：手动启动
-
-#### 1. 创建数据库
-```bash
-mysql -u root -p < database/nursing_home.sql
-```
-
-#### 2. 修改数据库配置
-编辑 `backend/src/main/resources/application.yml`:
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/nursing_home
-    username: root
-    password: your_password
-```
-
-#### 3. 启动后端
 ```bash
 cd backend
+
+# 编译
+mvn clean compile
+
+# 测试
+mvn test
+
+# 打包
+mvn clean package -DskipTests
+
+# 运行
 mvn spring-boot:run
 ```
-后端访问地址：`http://localhost:8081`
 
-#### 4. 启动前端
+### 前端开发
+
 ```bash
 cd frontend
-npm install
-npm run serve
-```
-前端访问地址：`http://localhost:8080`
 
-### 方式三：Docker部署
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run serve
+
+# 构建生产环境
+npm run build
+
+# 代码检查
+npm run lint
+```
+
+---
+
+## 🐳 Docker部署
 
 ```bash
-# 启动所有服务
+# 构建并启动所有服务
 docker-compose up -d
 
 # 查看日志
@@ -166,57 +235,60 @@ docker-compose logs -f
 docker-compose down
 ```
 
-## 默认账号
+---
 
-- 用户名: admin
-- 密码: 123456
+## ❓ 常见问题
 
-## API接口文档
+**Q: 后端启动报错 "Name for argument of type [java.lang.String] not specified"**
 
-### 用户相关
-- POST `/user/login` - 用户登录
-- POST `/user/register` - 用户注册
-- GET `/user/info` - 获取当前用户信息
-- GET `/user/list` - 获取用户列表
+A: 执行 `mvn clean compile` 清理缓存后重新启动
 
-### 老人相关
-- GET `/elder/list` - 获取老人列表（分页）
-- POST `/elder` - 添加老人
-- PUT `/elder` - 更新老人
-- DELETE `/elder/{id}` - 删除老人
-- PUT `/elder/{id}/checkin` - 办理入住
-- PUT `/elder/{id}/checkout` - 办理退住
+**Q: 数据库连接失败**
 
-### 入住申请相关
-- GET `/application/list` - 获取申请列表
-- POST `/application` - 提交申请
-- PUT `/application/{id}/approve` - 审批通过
-- PUT `/application/{id}/reject` - 审批拒绝
+A: 检查MySQL服务是否启动，用户名密码是否正确
 
-### 护理计划相关
-- GET `/care-plan/list` - 获取护理计划列表
-- POST `/care-plan` - 创建护理计划
-- PUT `/care-plan/{id}/pause` - 暂停计划
-- PUT `/care-plan/{id}/resume` - 恢复计划
+**Q: 前端安装依赖失败**
 
-### 员工相关
-- GET `/employee/list` - 获取员工列表
-- POST `/employee` - 添加员工
-- PUT `/employee/{id}/resign` - 办理离职
+A: 尝试使用淘宝镜像：`npm config set registry https://registry.npmmirror.com`
 
-## 项目特点
+更多问题请参考 [启动说明.md](启动说明.md) 中的"常见问题解决"章节
 
-1. **前后端分离**: 前端Vue3 + 后端Spring Boot，职责清晰
-2. **RESTful API**: 统一的接口设计规范
-3. **JWT认证**: 安全的用户认证机制
-4. **分页查询**: 大数据量分页展示
-5. **响应式布局**: 适配不同屏幕尺寸
-6. **代码规范**: 遵循Java和Vue编码规范
+---
 
-## 开发团队
+## 🤝 贡献指南
 
-本项目为养老院管理系统演示项目，包含完整的业务功能和技术实现。
+欢迎提交Issue和Pull Request！
 
-## 许可证
+1. Fork 本仓库
+2. 创建你的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交你的修改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开一个 Pull Request
 
-MIT License
+---
+
+## 📄 许可证
+
+本项目采用 [MIT](LICENSE) 许可证
+
+---
+
+## 👨‍💻 开发团队
+
+- 项目发起：养老院管理系统项目组
+- 技术栈：Spring Boot + Vue3 + MySQL
+- 开发时间：2024-2025
+
+---
+
+## 🙏 致谢
+
+感谢以下开源项目：
+- [Spring Boot](https://spring.io/projects/spring-boot)
+- [Vue.js](https://vuejs.org/)
+- [Element Plus](https://element-plus.org/)
+- [MyBatis](https://mybatis.org/)
+
+---
+
+**如果觉得本项目对你有帮助，请给个 Star ⭐️ 支持一下！**
