@@ -1,9 +1,12 @@
 package com.nursinghome.service;
 
 import com.nursinghome.entity.Fee;
+import com.nursinghome.entity.PageResult;
 import com.nursinghome.entity.Result;
 import com.nursinghome.mapper.FeeMapper;
 import com.nursinghome.util.CodeGenerator;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +28,18 @@ public class FeeService {
     /**
      * 获取费用记录列表（分页）
      */
-    public Result getFeeList(Long elderId, String feeType, String status, String feeMonth) {
+    public Result getFeeList(Long elderId, String feeType, String status, String feeMonth, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
         List<Fee> list = feeMapper.selectByPage(elderId, feeType, status, feeMonth);
-        return Result.success(list);
+        PageInfo<Fee> pageInfo = new PageInfo<>(list);
+        
+        PageResult<Fee> pageResult = new PageResult<>(
+            pageInfo.getList(),
+            pageInfo.getTotal(),
+            pageNum,
+            pageSize
+        );
+        return Result.success(pageResult);
     }
 
     /**

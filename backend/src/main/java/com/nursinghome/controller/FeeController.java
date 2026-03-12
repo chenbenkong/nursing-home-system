@@ -3,10 +3,14 @@ package com.nursinghome.controller;
 import com.nursinghome.entity.Fee;
 import com.nursinghome.entity.Result;
 import com.nursinghome.service.FeeService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.nursinghome.entity.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 费用管理控制器
@@ -19,14 +23,16 @@ public class FeeController {
     private FeeService feeService;
 
     /**
-     * 获取费用记录列表
+     * 获取费用记录列表（分页）
      */
     @GetMapping("/list")
     public Result list(@RequestParam(required = false) Long elderId,
                        @RequestParam(required = false) String feeType,
                        @RequestParam(required = false) String status,
-                       @RequestParam(required = false) String feeMonth) {
-        return feeService.getFeeList(elderId, feeType, status, feeMonth);
+                       @RequestParam(required = false) String feeMonth,
+                       @RequestParam(defaultValue = "1") Integer pageNum,
+                       @RequestParam(defaultValue = "10") Integer pageSize) {
+        return feeService.getFeeList(elderId, feeType, status, feeMonth, pageNum, pageSize);
     }
 
     /**

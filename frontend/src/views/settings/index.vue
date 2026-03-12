@@ -265,9 +265,9 @@
               <el-pagination
                 v-model:current-page="logPageNum"
                 v-model:page-size="logPageSize"
-                :page-sizes="[10, 20, 50, 100]"
+                :page-sizes="[5, 10, 20, 50, 100]"
                 :total="logTotal"
-                layout="total, sizes, prev, pager, next"
+                layout="total, sizes, prev, pager, next, jumper"
                 @size-change="handleLogSizeChange"
                 @current-change="handleLogCurrentChange"
               />
@@ -348,7 +348,7 @@ export default {
     // 日志
     const logLoading = ref(false)
     const logPageNum = ref(1)
-    const logPageSize = ref(10)
+    const logPageSize = ref(5)
     const logTotal = ref(100)
     const logSearchForm = reactive({
       operationType: '',

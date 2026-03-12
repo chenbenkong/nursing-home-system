@@ -183,9 +183,9 @@
         <el-pagination
           v-model:current-page="pageNum"
           v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="[5, 10, 20, 50, 100]"
           :total="total"
-          layout="total, sizes, prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -321,40 +321,78 @@
     <el-dialog
       v-model="viewDialogVisible"
       title="老人详情"
-      width="700px"
+      width="800px"
     >
-      <el-descriptions :column="2" border>
-        <el-descriptions-item label="姓名">{{ currentRow.name }}</el-descriptions-item>
-        <el-descriptions-item label="性别">{{ currentRow.gender === 'MALE' ? '男' : '女' }}</el-descriptions-item>
-        <el-descriptions-item label="出生日期">{{ formatDate(currentRow.birthDate) }}</el-descriptions-item>
-        <el-descriptions-item label="身份证号">{{ currentRow.idCard }}</el-descriptions-item>
-        <el-descriptions-item label="手机号">{{ currentRow.phone }}</el-descriptions-item>
-        <el-descriptions-item label="紧急联系人">{{ currentRow.emergencyContact }}</el-descriptions-item>
-        <el-descriptions-item label="紧急电话">{{ currentRow.emergencyPhone }}</el-descriptions-item>
-        <el-descriptions-item label="健康状况">
-          <el-tag v-if="currentRow.healthStatus === 'HEALTHY'" type="success">健康</el-tag>
-          <el-tag v-else-if="currentRow.healthStatus === 'SUBHEALTH'" type="warning">亚健康</el-tag>
-          <el-tag v-else-if="currentRow.healthStatus === 'CHRONIC'" type="info">慢性病</el-tag>
-          <el-tag v-else type="danger">失能</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="护理等级">
-          <el-tag v-if="currentRow.careLevel === 'LEVEL1'">一级</el-tag>
-          <el-tag v-else-if="currentRow.careLevel === 'LEVEL2'" type="success">二级</el-tag>
-          <el-tag v-else-if="currentRow.careLevel === 'LEVEL3'" type="warning">三级</el-tag>
-          <el-tag v-else type="danger">四级</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="状态">
-          <el-tag v-if="currentRow.status === 'PENDING'" type="info">待入住</el-tag>
-          <el-tag v-else-if="currentRow.status === 'CHECKED_IN'" type="success">已入住</el-tag>
-          <el-tag v-else-if="currentRow.status === 'CHECKED_OUT'" type="danger">已退住</el-tag>
-          <el-tag v-else type="warning">暂停</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="入住日期">{{ formatDate(currentRow.checkInDate) || '-' }}</el-descriptions-item>
-        <el-descriptions-item label="房间号">{{ currentRow.roomNumber || (currentRow.roomId ? '房间' + currentRow.roomId : '-') }}</el-descriptions-item>
-        <el-descriptions-item label="床号">{{ currentRow.bedNo || currentRow.bedNumber || '-' }}</el-descriptions-item>
-        <el-descriptions-item label="地址" :span="2">{{ currentRow.address }}</el-descriptions-item>
-        <el-descriptions-item label="备注" :span="2">{{ currentRow.remark || '暂无' }}</el-descriptions-item>
-      </el-descriptions>
+      <el-tabs v-model="activeTab" type="border-card">
+        <!-- 基本信息 -->
+        <el-tab-pane label="基本信息" name="basic">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="姓名">{{ currentRow.name }}</el-descriptions-item>
+            <el-descriptions-item label="性别">{{ currentRow.gender === 'MALE' ? '男' : '女' }}</el-descriptions-item>
+            <el-descriptions-item label="出生日期">{{ formatDate(currentRow.birthDate) }}</el-descriptions-item>
+            <el-descriptions-item label="身份证号">{{ currentRow.idCard }}</el-descriptions-item>
+            <el-descriptions-item label="手机号">{{ currentRow.phone }}</el-descriptions-item>
+            <el-descriptions-item label="紧急联系人">{{ currentRow.contactName || currentRow.emergencyContact }}</el-descriptions-item>
+            <el-descriptions-item label="紧急电话">{{ currentRow.contactPhone || currentRow.emergencyPhone }}</el-descriptions-item>
+            <el-descriptions-item label="与老人关系">{{ currentRow.contactRelation || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="健康状况">
+              <el-tag v-if="currentRow.healthStatus === 'HEALTHY'" type="success">健康</el-tag>
+              <el-tag v-else-if="currentRow.healthStatus === 'SUBHEALTH'" type="warning">亚健康</el-tag>
+              <el-tag v-else-if="currentRow.healthStatus === 'CHRONIC'" type="info">慢性病</el-tag>
+              <el-tag v-else type="danger">失能</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="护理等级">
+              <el-tag v-if="currentRow.careLevel === 'LEVEL1'">一级</el-tag>
+              <el-tag v-else-if="currentRow.careLevel === 'LEVEL2'" type="success">二级</el-tag>
+              <el-tag v-else-if="currentRow.careLevel === 'LEVEL3'" type="warning">三级</el-tag>
+              <el-tag v-else type="danger">四级</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <el-tag v-if="currentRow.status === 'PENDING'" type="info">待入住</el-tag>
+              <el-tag v-else-if="currentRow.status === 'CHECKED_IN'" type="success">已入住</el-tag>
+              <el-tag v-else-if="currentRow.status === 'CHECKED_OUT'" type="danger">已退住</el-tag>
+              <el-tag v-else type="warning">暂停</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="老人编号">{{ currentRow.elderNo }}</el-descriptions-item>
+            <el-descriptions-item label="入住日期">{{ formatDate(currentRow.checkInDate) || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="退住日期">{{ formatDate(currentRow.checkOutDate) || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="房间号">{{ currentRow.roomNumber || (currentRow.roomId ? '房间' + currentRow.roomId : '-') }}</el-descriptions-item>
+            <el-descriptions-item label="床号">{{ currentRow.bedNo || currentRow.bedNumber || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="地址" :span="2">{{ currentRow.address || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="备注" :span="2">{{ currentRow.remark || '暂无' }}</el-descriptions-item>
+          </el-descriptions>
+        </el-tab-pane>
+
+        <!-- 时间轴 -->
+        <el-tab-pane label="历史记录" name="timeline">
+          <div class="timeline-container" v-loading="timelineLoading">
+            <el-timeline v-if="timelineEvents.length > 0">
+              <el-timeline-item
+                v-for="(event, index) in timelineEvents"
+                :key="index"
+                :type="getTimelineItemType(event.eventType)"
+                :color="getTimelineItemColor(event.eventType)"
+                :icon="getTimelineItemIcon(event.eventType)"
+                :timestamp="formatDateTime(event.eventTime)"
+                placement="top"
+              >
+                <el-card class="timeline-card" :body-style="{ padding: '12px 16px' }">
+                  <template #header>
+                    <div class="timeline-header">
+                      <span class="timeline-title">{{ event.title }}</span>
+                      <el-tag size="small" :type="getTimelineTagType(event.eventType)">
+                        {{ getEventTypeLabel(event.eventType) }}
+                      </el-tag>
+                    </div>
+                  </template>
+                  <div class="timeline-content">{{ event.description }}</div>
+                </el-card>
+              </el-timeline-item>
+            </el-timeline>
+            <el-empty v-else description="暂无历史记录" />
+          </div>
+        </el-tab-pane>
+      </el-tabs>
       <template #footer>
         <el-button @click="viewDialogVisible = false">关闭</el-button>
       </template>
@@ -418,7 +456,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus } from '@element-plus/icons-vue'
 import { getElderList, addElder, updateElder, deleteElder, checkIn, checkOut } from '@/api/elder'
 import { getAvailableRooms } from '@/api/room'
+import { getElderTimeline } from '@/api/elderTimeline'
 import ArtisticBackground from '@/components/ArtisticBackground.vue'
+import { CircleCheck, CircleClose, Switch, FirstAidKit, Money, RefreshLeft } from '@element-plus/icons-vue'
 
 export default {
   name: 'Elder',
@@ -426,7 +466,13 @@ export default {
     ArtisticBackground,
     Search,
     Refresh,
-    Plus
+    Plus,
+    CircleCheck,
+    CircleClose,
+    Switch,
+    FirstAidKit,
+    Money,
+    RefreshLeft
   },
   setup() {
     const router = useRouter()
@@ -435,14 +481,14 @@ export default {
     const tableData = ref([])
     const total = ref(0)
     const pageNum = ref(1)
-    const pageSize = ref(10)
+    const pageSize = ref(5)
     const dialogVisible = ref(false)
     const viewDialogVisible = ref(false)
     const dialogTitle = ref('')
     const formRef = ref(null)
     const isEdit = ref(false)
     const currentRow = ref({})
-    
+
     // 统计数据
     const statistics = ref({
       totalCount: 0,
@@ -450,6 +496,21 @@ export default {
       pendingCount: 0,
       checkedOutCount: 0
     })
+
+    // 时间轴相关
+    const activeTab = ref('basic')
+    const timelineLoading = ref(false)
+    const timelineEvents = ref([])
+
+    // 事件类型配置
+    const eventTypeConfig = {
+      'CHECK_IN': { label: '入住', type: 'success', color: '#67C23A', icon: 'CircleCheck' },
+      'CHECK_OUT': { label: '退住', type: 'danger', color: '#F56C6C', icon: 'CircleClose' },
+      'ROOM_CHANGE': { label: '换房', type: 'warning', color: '#E6A23C', icon: 'Switch' },
+      'CARE_PLAN': { label: '护理计划', type: 'primary', color: '#409EFF', icon: 'FirstAidKit' },
+      'FEE_PAYMENT': { label: '缴费', type: 'info', color: '#909399', icon: 'Money' },
+      'FEE_REFUND': { label: '退款', type: 'danger', color: '#FF6B6B', icon: 'RefreshLeft' }
+    }
     
     const searchForm = reactive({
       name: '',
@@ -541,9 +602,85 @@ export default {
       dialogVisible.value = true
     }
     
-    const handleView = (row) => {
+    const handleView = async (row) => {
       currentRow.value = row
+      activeTab.value = 'basic'
       viewDialogVisible.value = true
+      // 加载时间轴数据
+      await loadTimelineData(row.id)
+    }
+
+    // 加载时间轴数据
+    const loadTimelineData = async (elderId) => {
+      timelineLoading.value = true
+      try {
+        const res = await getElderTimeline(elderId)
+        if (res.code === 200) {
+          timelineEvents.value = res.data || []
+        } else {
+          timelineEvents.value = []
+        }
+      } catch (error) {
+        console.error('获取时间轴数据失败:', error)
+        timelineEvents.value = []
+      } finally {
+        timelineLoading.value = false
+      }
+    }
+
+    // 获取时间轴项类型
+    const getTimelineItemType = (eventType) => {
+      return eventTypeConfig[eventType]?.type || 'primary'
+    }
+
+    // 获取时间轴项颜色
+    const getTimelineItemColor = (eventType) => {
+      return eventTypeConfig[eventType]?.color || '#409EFF'
+    }
+
+    // 获取时间轴项图标
+    const getTimelineItemIcon = (eventType) => {
+      const iconMap = {
+        'CircleCheck': CircleCheck,
+        'CircleClose': CircleClose,
+        'Switch': Switch,
+        'FirstAidKit': FirstAidKit,
+        'Money': Money,
+        'RefreshLeft': RefreshLeft
+      }
+      const iconName = eventTypeConfig[eventType]?.icon
+      return iconMap[iconName]
+    }
+
+    // 获取时间轴标签类型
+    const getTimelineTagType = (eventType) => {
+      return eventTypeConfig[eventType]?.type || 'primary'
+    }
+
+    // 获取事件类型标签
+    const getEventTypeLabel = (eventType) => {
+      return eventTypeConfig[eventType]?.label || eventType
+    }
+
+    // 格式化日期时间
+    const formatDateTime = (dateTime) => {
+      if (!dateTime) return ''
+      if (typeof dateTime === 'string') {
+        // 处理 ISO 格式日期
+        const date = new Date(dateTime)
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          }).replace(/\//g, '-')
+        }
+        return dateTime
+      }
+      return dateTime
     }
     
     // 格式化日期为字符串
@@ -875,9 +1012,21 @@ export default {
       changeRoomForm,
       availableRoomsForChange,
       availableBedsForChange,
+      // 时间轴相关
+      activeTab,
+      timelineLoading,
+      timelineEvents,
       formatDate,
       formatDateToString,
+      formatDateTime,
       getRoomTypeText,
+      // 时间轴方法
+      getTimelineItemType,
+      getTimelineItemColor,
+      getTimelineItemIcon,
+      getTimelineTagType,
+      getEventTypeLabel,
+      loadTimelineData,
       handleSearch,
       resetSearch,
       handleAdd,
@@ -1007,10 +1156,79 @@ export default {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      
+
       .bed-number {
         font-size: 12px;
         color: #909399;
+      }
+    }
+  }
+
+  // 时间轴样式
+  .timeline-container {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 10px;
+
+    .el-timeline {
+      padding-left: 10px;
+    }
+
+    .timeline-card {
+      margin-bottom: 5px;
+
+      :deep(.el-card__header) {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--el-border-color-light);
+      }
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .timeline-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--el-text-color-primary);
+      }
+    }
+
+    .timeline-content {
+      font-size: 13px;
+      color: var(--el-text-color-regular);
+      line-height: 1.6;
+    }
+  }
+}
+
+// 黑夜模式适配
+html.dark {
+  .elder-container {
+    .timeline-container {
+      .timeline-card {
+        background-color: var(--el-bg-color-overlay);
+        border-color: var(--el-border-color-darker);
+
+        :deep(.el-card__header) {
+          border-bottom-color: var(--el-border-color-darker);
+        }
+      }
+
+      .timeline-header {
+        .timeline-title {
+          color: var(--el-text-color-primary);
+        }
+      }
+
+      .timeline-content {
+        color: var(--el-text-color-regular);
+      }
+
+      // 时间轴节点文字颜色
+      :deep(.el-timeline-item__timestamp) {
+        color: var(--el-text-color-secondary);
       }
     }
   }

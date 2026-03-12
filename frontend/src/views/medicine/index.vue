@@ -148,7 +148,7 @@
         <el-pagination
           v-model:current-page="pageNum"
           v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="[5, 10, 20, 50, 100]"
           :total="total"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
@@ -336,7 +336,7 @@ const submitLoading = ref(false)
 const medicineList = ref([])
 const total = ref(0)
 const pageNum = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(5)
 
 // 统计数据
 const statistics = ref({

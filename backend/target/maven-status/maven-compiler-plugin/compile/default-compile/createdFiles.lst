@@ -6,6 +6,7 @@ com\nursinghome\controller\FamilyElderRelationController.class
 com\nursinghome\entity\MealMenu.class
 com\nursinghome\common\BaseService.class
 com\nursinghome\util\AESUtil.class
+com\nursinghome\controller\ElderTimelineController.class
 com\nursinghome\mapper\UserMapper.class
 com\nursinghome\entity\Elder.class
 com\nursinghome\mapper\RoomMapper.class
@@ -24,6 +25,7 @@ com\nursinghome\util\BCryptUtil.class
 com\nursinghome\entity\OperationLog.class
 com\nursinghome\mapper\FamilyElderRelationMapper.class
 com\nursinghome\entity\ElderMeal.class
+com\nursinghome\entity\ElderTimelineEvent$ElderTimelineEventBuilder.class
 com\nursinghome\entity\Result.class
 com\nursinghome\mapper\MedicineMapper.class
 com\nursinghome\common\BaseController.class
@@ -60,7 +62,9 @@ com\nursinghome\config\WebConfig.class
 com\nursinghome\controller\ElderController.class
 com\nursinghome\controller\MedicationRecordController.class
 com\nursinghome\controller\SysConfigController.class
+com\nursinghome\entity\ElderTimelineEvent$EventType.class
 com\nursinghome\service\impl\UserServiceImpl.class
+com\nursinghome\service\ElderTimelineService.class
 com\nursinghome\mapper\MedicationRecordMapper.class
 com\nursinghome\entity\ActivityParticipant.class
 com\nursinghome\service\FeeService.class
@@ -71,6 +75,7 @@ com\nursinghome\mapper\InventoryMapper.class
 com\nursinghome\entity\MedicationRecord.class
 com\nursinghome\util\JwtUtil.class
 com\nursinghome\entity\CheckInApplication.class
+com\nursinghome\entity\ElderTimelineEvent.class
 com\nursinghome\controller\ActivityController.class
 com\nursinghome\entity\Activity.class
 com\nursinghome\mapper\ElderMedicationMapper.class

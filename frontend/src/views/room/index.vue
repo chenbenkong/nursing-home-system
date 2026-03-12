@@ -181,9 +181,9 @@
         <el-pagination
           v-model:current-page="pageNum"
           v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="[5, 10, 20, 50, 100]"
           :total="total"
-          layout="total, sizes, prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -374,7 +374,7 @@ export default {
     const roomList = ref([])
     const total = ref(0)
     const pageNum = ref(1)
-    const pageSize = ref(10)
+    const pageSize = ref(5)
     const dialogVisible = ref(false)
     const viewDialogVisible = ref(false)
     const dialogTitle = ref('')
@@ -973,10 +973,10 @@ export default {
       .floor-title {
         font-size: 18px;
         font-weight: 600;
-        color: #303133;
+        color: var(--el-text-color-primary);
         margin-bottom: 15px;
         padding-left: 10px;
-        border-left: 4px solid #409EFF;
+        border-left: 4px solid var(--el-color-primary);
       }
 
       .floor-rooms {
@@ -1047,12 +1047,12 @@ export default {
   .bed-section {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid #EBEEF5;
+    border-top: 1px solid var(--el-border-color-light);
 
     .bed-title {
       font-size: 16px;
       font-weight: 600;
-      color: #303133;
+      color: var(--el-text-color-primary);
       margin-bottom: 15px;
     }
 
@@ -1067,37 +1067,111 @@ export default {
       padding: 15px;
       border-radius: 8px;
       text-align: center;
+      background: var(--el-bg-color-overlay);
+      border: 1px solid var(--el-border-color-light);
 
       &.available {
-        background: #f0f9eb;
-        border: 1px solid #67C23A;
+        background: var(--el-color-success-light-9);
+        border-color: var(--el-color-success);
+
+        .bed-number {
+          color: var(--el-color-success);
+        }
       }
 
       &.occupied {
-        background: #fef0f0;
-        border: 1px solid #F56C6C;
+        background: var(--el-color-danger-light-9);
+        border-color: var(--el-color-danger);
+
+        .bed-number {
+          color: var(--el-color-danger);
+        }
       }
 
       &.maintenance {
-        background: #f4f4f5;
-        border: 1px solid #909399;
+        background: var(--el-fill-color-light);
+        border-color: var(--el-text-color-secondary);
       }
 
       .bed-number {
         font-size: 16px;
         font-weight: 600;
         margin-bottom: 5px;
+        color: var(--el-text-color-primary);
       }
 
       .bed-status {
         font-size: 12px;
-        color: #909399;
+        color: var(--el-text-color-secondary);
         margin-bottom: 5px;
       }
 
       .bed-occupant {
         font-size: 12px;
-        color: #F56C6C;
+        color: var(--el-color-danger);
+      }
+    }
+  }
+}
+
+// 黑夜模式适配
+html.dark {
+  .room-container {
+    // 楼层视图
+    .floor-view {
+      .floor-section {
+        .floor-title {
+          color: var(--el-text-color-primary);
+          border-left-color: var(--el-color-primary);
+        }
+      }
+    }
+
+    .bed-section {
+      border-top-color: var(--el-border-color-darker);
+
+      .bed-title {
+        color: var(--el-text-color-primary);
+      }
+
+      .bed-item {
+        background: var(--el-fill-color-dark);
+        border-color: var(--el-border-color-darker);
+
+        &.available {
+          background: rgba(103, 194, 58, 0.2);
+          border-color: var(--el-color-success);
+
+          .bed-number {
+            color: var(--el-color-success-light-3);
+          }
+        }
+
+        &.occupied {
+          background: rgba(245, 108, 108, 0.2);
+          border-color: var(--el-color-danger);
+
+          .bed-number {
+            color: var(--el-color-danger-light-3);
+          }
+        }
+
+        &.maintenance {
+          background: var(--el-fill-color-darker);
+          border-color: var(--el-text-color-secondary);
+        }
+
+        .bed-number {
+          color: var(--el-text-color-primary);
+        }
+
+        .bed-status {
+          color: var(--el-text-color-secondary);
+        }
+
+        .bed-occupant {
+          color: var(--el-color-danger-light-3);
+        }
       }
     }
   }
